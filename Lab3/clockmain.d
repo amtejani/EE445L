@@ -1,0 +1,9 @@
+.\clockmain.o: ClockMain.c
+.\clockmain.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\clockmain.o: ST7735.h
+.\clockmain.o: PLL.h
+.\clockmain.o: SysTickDriver.h
+.\clockmain.o: SpeakerDriver.h
+.\clockmain.o: SwitchDriver.h
+.\clockmain.o: ADCSWTrigger.h
+.\clockmain.o: ../inc/tm4c123gh6pm.h
