@@ -140,7 +140,19 @@ void DrawClock(char* title, uint32_t time) {
 	ST7735_OutUDec(time%100);
 	// draw standard vs military
 	if(HomeState == STANDARD_CLOCK) {
+		ST7735_OutUDec((time/100)%12);
+		ST7735_OutString(":");
+		ST7735_OutUDec(time%100);
+		if(time/100 < 12){
+			ST7735_OutString(" AM");
+		}
+		else{
+			ST7735_OutString(" PM");
+		}
 	} else {
+		ST7735_OutUDec(time/100);
+		ST7735_OutString(":");
+		ST7735_OutUDec(time%100);
 	}
 	
 }
