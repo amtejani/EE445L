@@ -22,14 +22,14 @@
 #include "../inc/tm4c123gh6pm.h"
 
 
-const uint8_t SIN_FIXED[] = {0, 10, 20, 30, 40, 49, 58, 66, 74, 80,
+const uint16_t SIN_FIXED[] = {0, 10, 20, 30, 40, 49, 58, 66, 74, 80,
 														86, 91, 95, 97, 99, 100, 99, 97, 95, 91,
 														86, 80, 74, 66, 58, 49, 40, 30, 20, 10,
 														0, -10, -20, -30, -40, -49, -58, -66, -74, -80,
 														-86, -91, -95, -97, -99, -100, -99, -97, -95, -91,
 														-86, -80, -74, -66, -58, -49, -40, -30, -20, -10};
 
-const uint8_t COS_FIXED[] = {100, 99, 97, 95, 91, 86, 80, 74, 66, 58,
+const uint16_t COS_FIXED[] = {100, 99, 97, 95, 91, 86, 80, 74, 66, 58,
 															50, 40, 30, 20, 10, 0, -10, -20, -30, -40,
 															-49, -58, -66, -74, -80, -86, -91, -95, -97, -99,
 															-100, -99, -97, -95, -91, -86, -80, -74, -66, -58,
@@ -48,9 +48,10 @@ static uint32_t State;		// current state
 static uint32_t AlarmOn = 0;							// 1 if alarm is on
 static uint32_t AlarmTime = 0;						// time of alarm
 static volatile uint32_t ADCValue = 0;		// adc value
-static uint32_t HomeState;
-static uint32_t BaseTime;
-static uint32_t NewTime;
+static uint32_t HomeState = 0;
+static uint32_t BaseTime = 0;
+static uint32_t NewTime = 0;
+static uint32_t OldTime = 0;
 extern uint32_t AtomicTime;								// current time
 
 // start set time state, or move to next state
@@ -104,14 +105,23 @@ const uint32_t Y_CLOCK_CENTER;
 const uint32_t HOUR_HAND_LENGTH;
 const uint32_t MINUTE_HAND_LENGTH;
 
-void DrawHourHand(uint32_t time) {
-	uint32_t angle = (((time/100) % 12)*60 + time%100)/12;
+void DrawHands(uint32_t time, uint16_t color) {
+	uint32_t angleHour = (((time/100) % 12)*60 + time%100)/12;
+	uint32_t xValueHour = X_CLOCK_CENTER - SIN_FIXED[angleHour]/5;
+	uint32_t yValueHour = Y_CLOCK_CENTER + COS_FIXED[angleHour]/5;
+	ST7735_Line(X_CLOCK_CENTER, Y_CLOCK_CENTER, xValueHour, yValueHour, color);
+	
+	uint32_t angleMinute = time%100;
+	uint32_t xValueMinute = X_CLOCK_CENTER - SIN_FIXED[angleMinute]/4;
+	uint32_t yValueMinute = Y_CLOCK_CENTER + COS_FIXED[angleMinute]/4;
+	ST7735_Line(X_CLOCK_CENTER, Y_CLOCK_CENTER, xValueMinute, yValueMinute, color);
 }
 
 // draw clock and lines
 void DrawClock(char* title, uint32_t time) {
 	// clear old values 
-	
+	DrawHands(OldTime, ST7735_WHITE);
+	OldTime = time;
 	// draw title
 	ST7735_SetCursor(0,0);
 	ST7735_OutString(title);
@@ -123,6 +133,7 @@ void DrawClock(char* title, uint32_t time) {
 	ST7735_OutString("Off");
 	}
 	// draw analog clock face
+	DrawHands(time, ST7735_BLACK);
 	// draw digital clock
 	ST7735_OutUDec(time/100);
 	ST7735_OutString(":");
