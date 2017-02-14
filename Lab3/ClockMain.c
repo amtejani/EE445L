@@ -8,8 +8,8 @@
 // TA: Lavanya
 // Last Revision: 2/9/2017
 
-#define ADC_READ_HOUR			((BaseTime/100 + ADCValue*24/4096) % 24) * 100
-#define ADC_READ_MINUTE		((BaseTime%100 + ADCValue*60/4096) % 60)
+#define ADC_READ_HOUR			((BaseTime/100 + ((ADCValue+4096-ADCInitial)%4096)*24/4096) % 24) * 100
+#define ADC_READ_MINUTE		(BaseTime%100 + ((ADCValue+4096-ADCInitial)%4096)*60/4096) % 60
 
 #include <stdint.h>
 #include <stdio.h>
@@ -456,6 +456,7 @@ const uint32_t SET_ALARM_HOUR = 4;
 const uint32_t SET_ALARM_MINUTE = 5;
 
 static uint32_t State;		// current state
+static uint32_t Ringing = 0;
 static uint32_t AlarmOn = 0;							// 1 if alarm is on
 static uint32_t AlarmTime = 0;						// time of alarm
 static uint32_t HomeState = 0;
@@ -463,13 +464,18 @@ static uint32_t BaseTime = 0;
 static uint32_t NewTime = 0;
 static uint32_t OldTime = 0;
 static uint32_t UpdateState = 1;
+static uint32_t ADCInitial = 0;
 extern uint32_t AtomicTime;								// current time
 extern uint32_t ADCValue;
 
 // start set time state, or move to next state
 void Button1SetTime(void) { 
-	if(State == SET_TIME_HOUR) {
+	if(Ringing) {
+		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
+		Ringing = 0;
+	} else if(State == SET_TIME_HOUR) {
 		NewTime = ADC_READ_HOUR;
+		ADCInitial = ADCValue;
 		State = SET_TIME_MINUTE;
 	} else if (State == SET_TIME_MINUTE) {
 		NewTime += ADC_READ_MINUTE;
@@ -477,6 +483,7 @@ void Button1SetTime(void) {
 		State = HomeState;
 	} else {
 		BaseTime = AtomicTime;
+		ADCInitial = ADCValue;
 		State = SET_TIME_HOUR;
 	}
 	UpdateState = 1;
@@ -484,8 +491,12 @@ void Button1SetTime(void) {
 
 // start set alarm state, or move to next state
 void Button2SetAlarm(void) {
-	if(State == SET_ALARM_HOUR) {
+	if(Ringing) {
+		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
+		Ringing = 0;
+	} else if(State == SET_ALARM_HOUR) {
 		NewTime = ADC_READ_HOUR;
+		ADCInitial = ADCValue;
 		State = SET_ALARM_MINUTE;
 	} else if (State == SET_ALARM_MINUTE) {
 		NewTime += ADC_READ_MINUTE;
@@ -493,6 +504,7 @@ void Button2SetAlarm(void) {
 		State = HomeState;
 	} else {
 		BaseTime = AlarmTime;
+		ADCInitial = ADCValue;
 		State = SET_ALARM_HOUR;
 	}
 	UpdateState = 1;
@@ -500,15 +512,25 @@ void Button2SetAlarm(void) {
 
 // enable/disable alarm
 void Buttton3ToggleAlarm(void) {
-	AlarmOn = 1 - AlarmOn;
+	if(Ringing) {
+		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
+		Ringing = 0;
+	} else {
+		AlarmOn = 1 - AlarmOn;
+	}
 	UpdateState = 1;
 }
 
 // move to next state
 void Button4ChangeMode(void) {
-	if(State == STANDARD_CLOCK) {
+	if(Ringing) {
+		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
+		Ringing = 0;
+	} else if(State == STANDARD_CLOCK) {
+		HomeState = MILITARY_CLOCK;
 		State = MILITARY_CLOCK;
 	} else if(State == MILITARY_CLOCK) {
+		HomeState = STANDARD_CLOCK;
 		State = STANDARD_CLOCK;
 	} else {
 		State = HomeState;
@@ -531,32 +553,18 @@ void DrawHands(uint32_t time, uint16_t color) {
 	ST7735_Line(X_CLOCK_CENTER, Y_CLOCK_CENTER, xValueMinute, yValueMinute, color);
 }
 
-// draw clock and lines
-void DrawClock(char* title, uint32_t time) {
-	if(UpdateState || OldTime != time) {
-		// clear old values 
-		DrawHands(OldTime, ST7735_BLACK);
-		// draw title
-		ST7735_SetCursor(0,0);
-		ST7735_FillRect(0,0,127,40,ST7735_BLACK);
-		ST7735_OutString(title);
-		ST7735_OutString("\rAlarm ");
-		if(AlarmOn) {
-			ST7735_OutString("On ");
-		} else {
-			ST7735_OutString("Off");
-		}
-		
-		DrawHands(time, ST7735_WHITE);
-			ST7735_OutString("\r");
-		// draw standard vs military
-		if(HomeState == STANDARD_CLOCK) {
-			ST7735_OutUDec((time/100)%12);
+void DrawDigital(uint32_t time) {
+	if(HomeState == STANDARD_CLOCK) {
+			if((time/100)%12 == 0){
+				ST7735_OutUDec(12); //0 hours = 12AM, 12 hours = 12PM
+			}
+			else{
+				ST7735_OutUDec((time/100)%12);
+			}
 			ST7735_OutString(":");
-			if(time%100/10 == 0) 
+			if(time%100 < 10) //make minutes < 10 two digits
 				ST7735_OutUDec(0);
 			ST7735_OutUDec(time%100);
-			//printf("%2d:%2d", time/100%12,time%100);
 			if(time/100 < 12){
 				ST7735_OutString(" AM");
 			}
@@ -566,8 +574,33 @@ void DrawClock(char* title, uint32_t time) {
 		} else {
 			ST7735_OutUDec(time/100);
 			ST7735_OutString(":");
+			if(time%100 < 10) //make minutes < 10 two digits
+				ST7735_OutUDec(0);
 			ST7735_OutUDec(time%100);
 		}
+}
+
+// draw clock and lines
+void DrawClock(char* title, uint32_t time) {
+	if(UpdateState || OldTime != time) {
+		// clear old values 
+		DrawHands(OldTime, ST7735_BLACK);
+		// draw title
+		ST7735_SetCursor(0,0);
+		ST7735_FillRect(0,0,127,10,ST7735_BLACK);
+		ST7735_OutString(title);
+		ST7735_OutString("\rAlarm ");
+		if(AlarmOn) {
+			ST7735_OutString("On ");
+			DrawDigital(AlarmTime);
+		} else {
+			ST7735_OutString("Off        ");
+		}
+		
+		DrawHands(time, ST7735_WHITE);
+		ST7735_OutString("\r");
+		// draw standard vs military
+		DrawDigital(time);
 		OldTime = time;
 
 		UpdateState = 0;
@@ -620,8 +653,10 @@ int main(void) {
 			Button4ChangeMode);
 	SysTick_Init();
 	Speaker_Init();
+	TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
 	ST7735_InitR(INITR_REDTAB);
 	ADC0_InitSWTriggerSeq3_Ch9();
+	ADC0_SAC_R = 0x04;				// set averaginge value
 	HomeState = STANDARD_CLOCK;
 	State = HomeState;
 	ST7735_FillScreen(ST7735_BLACK);
@@ -629,7 +664,11 @@ int main(void) {
 	EnableInterrupts();
 	
 	while(1) {
-			DisplayClock();
+		DisplayClock();
+		if(AlarmOn && AlarmTime == AtomicTime) {
+			Ringing = 1;
+			TIMER2_CTL_R |= TIMER_CTL_TAEN;
+		} 
 	}
 }
 

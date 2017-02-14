@@ -22,7 +22,7 @@ void WaitForInterrupt(void);  		// low power mode
 
 // starts timer 2 and interrupts
 // sets timer to play A note
-static void Timer2_Init(void){
+static void Timer2_Arm(void){
   volatile uint32_t delay;
   DisableInterrupts();
   // **** general initialization ****
@@ -39,7 +39,7 @@ static void Timer2_Init(void){
   TIMER2_CTL_R |= TIMER_CTL_TAEN;  // enable timer0A 32-b, periodic, interrupts
   // **** interrupt initialization ****
                                    // Timer2=priority 1
-  NVIC_PRI5_R = (NVIC_PRI5_R&0x00FFFFFF)|0x20000000; // top 3 bits
+  NVIC_PRI5_R = (NVIC_PRI5_R&0x00FFFFFF)|0x80000000; // top 3 bits
   NVIC_EN0_R = 1<<23;              // enable interrupt 19 in NVIC
 }
 
@@ -53,7 +53,7 @@ void Speaker_Init(void) {
 	GPIO_PORTE_AFSEL_R &= ~0x20;             // Disable Alternate Function on PE5
 	GPIO_PORTE_DEN_R   |= 0x20;              // Enable digital I/O for PE5
 	GPIO_PORTE_AMSEL_R &= ~0x20;             // Disable analog functionality
-	Timer2_Init();
+	Timer2_Arm();
 }
 
 
