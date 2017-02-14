@@ -513,13 +513,13 @@ const uint32_t Y_CLOCK_CENTER=110;
 
 void DrawHands(uint32_t time, uint16_t color) {
 	uint32_t angleHour = (((time/100) % 12)*60 + time%100)/12;
-	uint32_t xValueHour = X_CLOCK_CENTER - SIN_FIXED[angleHour]/5;
-	uint32_t yValueHour = Y_CLOCK_CENTER + COS_FIXED[angleHour]/5;
+	uint32_t xValueHour = X_CLOCK_CENTER + SIN_FIXED[angleHour]/5;
+	uint32_t yValueHour = Y_CLOCK_CENTER - COS_FIXED[angleHour]/5;
 	ST7735_Line(X_CLOCK_CENTER, Y_CLOCK_CENTER, xValueHour, yValueHour, color);
 	
 	uint32_t angleMinute = time%100;
-	uint32_t xValueMinute = X_CLOCK_CENTER - SIN_FIXED[angleMinute]/4;
-	uint32_t yValueMinute = Y_CLOCK_CENTER + COS_FIXED[angleMinute]/4;
+	uint32_t xValueMinute = X_CLOCK_CENTER + SIN_FIXED[angleMinute]/4;
+	uint32_t yValueMinute = Y_CLOCK_CENTER - COS_FIXED[angleMinute]/4;
 	ST7735_Line(X_CLOCK_CENTER, Y_CLOCK_CENTER, xValueMinute, yValueMinute, color);
 }
 
@@ -528,7 +528,6 @@ void DrawClock(char* title, uint32_t time) {
 	// clear old values 
 	if(OldTime != time) {
 		DrawHands(OldTime, ST7735_WHITE);
-		OldTime = time;
 	}
 	// draw title
 	ST7735_SetCursor(0,0);
@@ -537,27 +536,29 @@ void DrawClock(char* title, uint32_t time) {
 	if(AlarmOn) {
 		ST7735_OutString("On \r");
 	} else {
-		
-	ST7735_OutString("Off\r");
+		ST7735_OutString("Off\r");
 	}
-	
-	DrawHands(time, ST7735_BLACK);
-	// draw standard vs military
-	if(HomeState == STANDARD_CLOCK) {
-		ST7735_OutUDec((time/100)%12);
-		ST7735_OutString(":");
-		ST7735_OutUDec(time%100);
-		if(time/100 < 12){
-			ST7735_OutString(" AM");
+
+	if(OldTime != time) {
+		DrawHands(time, ST7735_BLACK);
+		// draw standard vs military
+		if(HomeState == STANDARD_CLOCK) {
+			ST7735_OutUDec((time/100)%12);
+			ST7735_OutString(":");
+			ST7735_OutUDec(time%100);
+			if(time/100 < 12){
+				ST7735_OutString(" AM");
+			}
+			else{
+				ST7735_OutString(" PM");
+			}
+		} else {
+			ST7735_OutUDec(time/100);
+			ST7735_OutString(":");
+			ST7735_OutUDec(time%100);
 		}
-		else{
-			ST7735_OutString(" PM");
-		}
-	} else {
-		ST7735_OutUDec(time/100);
-		ST7735_OutString(":");
-		ST7735_OutUDec(time%100);
 	}
+	OldTime = time;
 	
 }
 
@@ -611,8 +612,7 @@ int main(void) {
 	ADC0_InitSWTriggerSeq3_Ch9();
 	HomeState = STANDARD_CLOCK;
 	State = HomeState;
-	ST7735_SetTextColor(ST7735_WHITE);
-	ST7735_FillScreen(ST7735_WHITE);
+	ST7735_FillScreen(ST7735_BLACK);
 	ST7735_DrawBitmap(24,150,clock,80,80);
 	EnableInterrupts();
 	
