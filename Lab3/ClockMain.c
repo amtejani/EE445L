@@ -551,16 +551,12 @@ void DrawClock(char* title, uint32_t time) {
 			ST7735_OutString("\r");
 		// draw standard vs military
 		if(HomeState == STANDARD_CLOCK) {
-			if((time/100)%12 == 0){
-				ST7735_OutUDec(12); //0 hours = 12AM, 12 hours = 12PM
-			}
-			else{
-				ST7735_OutUDec((time/100)%12);
-			}
+			ST7735_OutUDec((time/100)%12);
 			ST7735_OutString(":");
-			if(time%100 < 10) //make minutes < 10 two digits
+			if(time%100/10 == 0) 
 				ST7735_OutUDec(0);
 			ST7735_OutUDec(time%100);
+			//printf("%2d:%2d", time/100%12,time%100);
 			if(time/100 < 12){
 				ST7735_OutString(" AM");
 			}
@@ -570,8 +566,6 @@ void DrawClock(char* title, uint32_t time) {
 		} else {
 			ST7735_OutUDec(time/100);
 			ST7735_OutString(":");
-			if(time%100 < 10) //make minutes < 10 two digits
-				ST7735_OutUDec(0);
 			ST7735_OutUDec(time%100);
 		}
 		OldTime = time;
