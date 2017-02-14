@@ -22,14 +22,16 @@
 #include "../inc/tm4c123gh6pm.h"
 
 
-const uint16_t SIN_FIXED[] = {0, 10, 20, 30, 40, 49, 58, 66, 74, 80,
+void EnableInterrupts(void);  		// Enable interrupts
+
+const int16_t SIN_FIXED[] = {0, 10, 20, 30, 40, 49, 58, 66, 74, 80,
 														86, 91, 95, 97, 99, 100, 99, 97, 95, 91,
 														86, 80, 74, 66, 58, 49, 40, 30, 20, 10,
 														0, -10, -20, -30, -40, -49, -58, -66, -74, -80,
 														-86, -91, -95, -97, -99, -100, -99, -97, -95, -91,
 														-86, -80, -74, -66, -58, -49, -40, -30, -20, -10};
 
-const uint16_t COS_FIXED[] = {100, 99, 97, 95, 91, 86, 80, 74, 66, 58,
+const int16_t COS_FIXED[] = {100, 99, 97, 95, 91, 86, 80, 74, 66, 58,
 															50, 40, 30, 20, 10, 0, -10, -20, -30, -40,
 															-49, -58, -66, -74, -80, -86, -91, -95, -97, -99,
 															-100, -99, -97, -95, -91, -86, -80, -74, -66, -58,
@@ -457,7 +459,7 @@ static volatile uint32_t ADCValue = 0;		// adc value
 static uint32_t HomeState = 0;
 static uint32_t BaseTime = 0;
 static uint32_t NewTime = 0;
-static uint32_t OldTime = 0;
+static uint32_t OldTime = 20000;
 extern uint32_t AtomicTime;								// current time
 
 // start set time state, or move to next state
@@ -524,24 +526,22 @@ void DrawHands(uint32_t time, uint16_t color) {
 // draw clock and lines
 void DrawClock(char* title, uint32_t time) {
 	// clear old values 
-	DrawHands(OldTime, ST7735_WHITE);
-	OldTime = time;
+	if(OldTime != time) {
+		DrawHands(OldTime, ST7735_WHITE);
+		OldTime = time;
+	}
 	// draw title
 	ST7735_SetCursor(0,0);
 	ST7735_OutString(title);
 	ST7735_OutString("\rAlarm ");
 	if(AlarmOn) {
-		ST7735_OutString("On");
+		ST7735_OutString("On \r");
 	} else {
 		
-	ST7735_OutString("Off");
+	ST7735_OutString("Off\r");
 	}
 	
 	DrawHands(time, ST7735_BLACK);
-	// draw digital clock
-	ST7735_OutUDec(time/100);
-	ST7735_OutString(":");
-	ST7735_OutUDec(time%100);
 	// draw standard vs military
 	if(HomeState == STANDARD_CLOCK) {
 		ST7735_OutUDec((time/100)%12);
@@ -590,6 +590,17 @@ void DisplayClock(void) {
 	DrawClock(screen,time);
 }
 
+// Subroutine to wait 10 msec
+void DelayWait10ms(uint32_t n){uint32_t volatile time;
+  while(n){
+    time = 727240*2/91;  // 10msec
+    while(time){
+	  	time--;
+    }
+    n--;
+  }
+}
+
 int main(void) {
 	PLL_Init(Bus80MHz);				// init modules
 	SysTick_Init();
@@ -600,9 +611,14 @@ int main(void) {
 	ADC0_InitSWTriggerSeq3_Ch9();
 	HomeState = STANDARD_CLOCK;
 	State = HomeState;
+	ST7735_SetTextColor(ST7735_WHITE);
+	ST7735_FillScreen(ST7735_WHITE);
 	ST7735_DrawBitmap(24,150,clock,80,80);
+	EnableInterrupts();
+	
 	while(1) {
 		DisplayClock();
+		DelayWait10ms(10);
 	}
 }
 
