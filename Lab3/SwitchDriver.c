@@ -85,12 +85,14 @@ void Switch_Init(void(*button1Task)(void), void(*button2Task)(void),
   // **** general initialization ****
   SYSCTL_RCGCGPIO_R |= 0x00000020; // (a) activate clock for port F
   while((SYSCTL_PRGPIO_R & 0x00000020) == 0){};
+	GPIO_PORTF_LOCK_R = 0x4C4F434B;
+	GPIO_PORTF_CR_R = 0x1B;           // allow changes to PF4-0
   GPIO_PORTF_DIR_R &= ~0x1B;    // (c) make PF4 in (built-in button)
   GPIO_PORTF_AFSEL_R &= ~0x1B;  //     disable alt funct on PF4,3,1,0
   GPIO_PORTF_DEN_R |= 0x1B;     //     enable digital I/O on PF4,3,1,0
   GPIO_PORTF_PCTL_R &= ~0x000FF0FF; // configure PF4 as GPIO
   GPIO_PORTF_AMSEL_R = 0;       //     disable analog functionality on PF
-  GPIO_PORTF_PUR_R |= 0x11;     //     enable weak pull-up on PF4, pf0
+  GPIO_PORTF_PUR_R |= 0x1B;     //     enable weak pull-up on PF4, pf0
   GPIO_PORTF_IS_R &= ~0x1B;     // (d) PF4 is edge-sensitive
   GPIO_PORTF_IBE_R |= 0x1B;     //     PF4 is both edges
   GPIOArm();
@@ -108,7 +110,7 @@ void Switch_Init(void(*button1Task)(void), void(*button2Task)(void),
   Release3 = 0;
   Touch4 = 0;    
   Release4 = 0;
-  Last = PF4 | PF3 | PF1 | PF0;     // initial switch state
+  Last = (PF4 | PF3 | PF1 | PF0);     // initial switch state
  }
 // Interrupt on rising or falling edge of PF4 (CCP0)
 void GPIOPortF_Handler(void){
@@ -133,13 +135,13 @@ void GPIOPortF_Handler(void){
 	} else {
 		Release1 = 1;
 	}
-  if(Last == 0x10){    			// button 4 press
+  if(Last == 0x0B){    			// button 1 press
     (*Button1Task)(); 			// execute user task
-  } else if(Last == 0x8){   // button 3 press
+  } else if(Last == 0x13){   // button 2 press
     (*Button2Task)();  			// execute user task
-  } else if(Last == 0x2){   // button 2 press
+  } else if(Last == 0x19){   // button 3 press
     (*Button3Task)();  			// execute user task
-  } else if(Last == 0x1){   // button 1 press
+  } else if(Last == 0x1A){   // button 4 press
     (*Button4Task)();  			// execute user task
   }
   Timer0Arm(); // start one shot
@@ -147,7 +149,7 @@ void GPIOPortF_Handler(void){
 // Interrupt 10 ms after rising edge of PF4
 void Timer0A_Handler(void){
   TIMER0_IMR_R = 0x00000000;    // disarm timeout interrupt
-  Last = PF4 | PF3 | PF1 | PF0;  // switch state
+  Last = (PF4 | PF3 | PF1 | PF0);  // switch state
   GPIOArm();   // start GPIO
 }
 

@@ -27,4 +27,9 @@ void SysTick_Init(void);
 // Executed every second
 void SysTick_Handler(void);
 
+
+// setTime
+// sets new time
+void SetTime(uint32_t time);
+
 #endif // __SYSTICKINTS_H__

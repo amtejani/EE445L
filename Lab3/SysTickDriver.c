@@ -53,19 +53,24 @@ void WaitForInterrupt(void);  // low power mode
 void SysTick_Init(){long sr;
   sr = StartCritical();
   NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
-  NVIC_ST_RELOAD_R = 79999999;// reload value
+  NVIC_ST_RELOAD_R = 799999;// reload value
   NVIC_ST_CURRENT_R = 0;      // any write to current clears it
   NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
                               // enable SysTick with core clock and interrupts
   NVIC_ST_CTRL_R = 0x07;
+  GPIO_PORTF_DIR_R |= 0x04;             // make PF2, PF1 out (built-in LED)
+  GPIO_PORTF_AFSEL_R &= ~0x4;          // disable alt funct on PF2
+	GPIO_PORTF_PUR_R |= 0x4;				 			// pullup for PF4
+  GPIO_PORTF_DEN_R |= 0x4;             // enable digital I/O on PF2
+                                        // configure PF2 as GPIO
+  GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R&0xFFFFF0FF)+0x00000000;
+  GPIO_PORTF_AMSEL_R = 0;               // disable analog functionality on PF
 	Seconds = 0;
 	Minutes = 0;
 	Hours = 0;
 	AtomicTime = 0;
   EndCritical(sr);
 }
-
-
 
 // **************SysTick_Handler******************
 // Interrupt service routine
@@ -81,6 +86,13 @@ void SysTick_Handler(void) {
 		}
 	}
 	AtomicTime = Hours*100 + Minutes;
+}
+
+// setTime
+// sets new time
+void SetTime(uint32_t time) {
+	Hours = time/100;
+	Minutes = time%100;
 }
 
 

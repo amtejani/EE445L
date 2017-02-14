@@ -1639,7 +1639,7 @@ void ST7735_Line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t co
 			hiX = &x1;
 			hiY = &y1;
 		}
-		int32_t slope = ((*hiY-*loY)*128)/(*hiX-*loX);
+		int32_t slope = ((*hiY-*loY + 1)*128)/(*hiX-*loX + 1);
 		int i;
 		for(i = *loX; i <= *hiX; i += 1) {
 			int absSlope = slope;				// absolute value of scope

@@ -1,5 +1,6 @@
 .\clockmain.o: ClockMain.c
 .\clockmain.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\clockmain.o: C:\Keil\ARM\ARMCC\bin\..\include\stdio.h
 .\clockmain.o: ST7735.h
 .\clockmain.o: PLL.h
 .\clockmain.o: SysTickDriver.h
