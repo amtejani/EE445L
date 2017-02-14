@@ -92,7 +92,7 @@ void Switch_Init(void(*button1Task)(void), void(*button2Task)(void),
   GPIO_PORTF_DEN_R |= 0x1B;     //     enable digital I/O on PF4,3,1,0
   GPIO_PORTF_PCTL_R &= ~0x000FF0FF; // configure PF4 as GPIO
   GPIO_PORTF_AMSEL_R = 0;       //     disable analog functionality on PF
-  GPIO_PORTF_PUR_R |= 0x1B;     //     enable weak pull-up on PF4, pf0
+  GPIO_PORTF_PUR_R |= 0x1B;     //     enable weak pull-up on PF4-1
   GPIO_PORTF_IS_R &= ~0x1B;     // (d) PF4 is edge-sensitive
   GPIO_PORTF_IBE_R |= 0x1B;     //     PF4 is both edges
   GPIOArm();
@@ -115,7 +115,7 @@ void Switch_Init(void(*button1Task)(void), void(*button2Task)(void),
 // Interrupt on rising or falling edge of PF4 (CCP0)
 void GPIOPortF_Handler(void){
   GPIO_PORTF_IM_R &= ~0x1B;     // disarm interrupt on PF4 
-	if(Last & 0x10) {
+	if(Last & 0x10) {		// used for wait for button presses
 		Touch4 = 1;
 	} else {
 		Release4 = 1;
@@ -135,6 +135,7 @@ void GPIOPortF_Handler(void){
 	} else {
 		Release1 = 1;
 	}
+														// if last for bit PF_ is 0, execute state change
   if(Last == 0x0B){    			// button 1 press
     (*Button1Task)(); 			// execute user task
   } else if(Last == 0x13){   // button 2 press

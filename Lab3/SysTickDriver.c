@@ -32,6 +32,7 @@
 
 #define PF2             (*((volatile uint32_t *)0x40025010))
 
+static uint32_t MilliSeconds;
 static uint32_t Seconds;
 static uint32_t Minutes;
 static uint32_t Hours;
@@ -53,7 +54,7 @@ void WaitForInterrupt(void);  // low power mode
 void SysTick_Init(){long sr;
   sr = StartCritical();
   NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
-  NVIC_ST_RELOAD_R = 799999;// reload value
+  NVIC_ST_RELOAD_R = 79999;// reload value
   NVIC_ST_CURRENT_R = 0;      // any write to current clears it
   NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
                               // enable SysTick with core clock and interrupts
@@ -78,11 +79,14 @@ void SysTick_Init(){long sr;
 // Executed every second
 void SysTick_Handler(void) {
 	PF2 ^= 0x04; // heartbeat
-	Seconds = (Seconds + 1) % 60;		// increment seconds
-	if (Seconds == 0) {
-		Minutes = (Minutes + 1) % 60;	// increment minutes if 60 seconds have passed	
-		if(Minutes == 0) {
-			Hours = (Hours + 1) % 24;		// increment hours if 60 minutes have passed
+	MilliSeconds = (MilliSeconds + 1) % 1000;
+	if(MilliSeconds == 0) {
+		Seconds = (Seconds + 1) % 60;		// increment seconds
+		if (Seconds == 0) {
+			Minutes = (Minutes + 1) % 60;	// increment minutes if 60 seconds have passed	
+			if(Minutes == 0) {
+				Hours = (Hours + 1) % 24;		// increment hours if 60 minutes have passed
+			}
 		}
 	}
 	AtomicTime = Hours*100 + Minutes;

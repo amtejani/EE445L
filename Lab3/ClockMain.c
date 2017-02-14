@@ -8,7 +8,9 @@
 // TA: Lavanya
 // Last Revision: 2/9/2017
 
+// equation to read hour from adc
 #define ADC_READ_HOUR			((BaseTime/100 + ((ADCValue+4096-ADCInitial)%4096)*24/4096) % 24) * 100
+// equation to read minute from adc
 #define ADC_READ_MINUTE		(BaseTime%100 + ((ADCValue+4096-ADCInitial)%4096)*60/4096) % 60
 
 #include <stdint.h>
@@ -25,6 +27,7 @@
 
 void EnableInterrupts(void);  		// Enable interrupts
 
+// sine table, where index 0 = 0 radians, 60 = 2pi radians
 const int16_t SIN_FIXED[] = {0, 10, 20, 30, 40, 49, 58, 66, 74, 80,
 														86, 91, 95, 97, 99, 100, 99, 97, 95, 91,
 														86, 80, 74, 66, 58, 49, 40, 30, 20, 10,
@@ -32,13 +35,15 @@ const int16_t SIN_FIXED[] = {0, 10, 20, 30, 40, 49, 58, 66, 74, 80,
 														-86, -91, -95, -97, -99, -100, -99, -97, -95, -91,
 														-86, -80, -74, -66, -58, -49, -40, -30, -20, -10};
 
+// cosine table, where index 0 = 0 radians, 60 = 2pi radians
 const int16_t COS_FIXED[] = {100, 99, 97, 95, 91, 86, 80, 74, 66, 58,
 															50, 40, 30, 20, 10, 0, -10, -20, -30, -40,
 															-49, -58, -66, -74, -80, -86, -91, -95, -97, -99,
 															-100, -99, -97, -95, -91, -86, -80, -74, -66, -58,
 															-50, -40, -30, -20, -10, 0, 10, 20, 30, 40,
 															50, 58, 66, 74, 80, 86, 91, 95, 97, 99};
-	
+
+// clock bitmap															
 const unsigned short CLOCK_WHITE[] = {
  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -455,33 +460,33 @@ const uint32_t SET_TIME_MINUTE = 3;
 const uint32_t SET_ALARM_HOUR = 4;
 const uint32_t SET_ALARM_MINUTE = 5;
 
-static uint32_t State;		// current state
-static uint32_t Ringing = 0;
-static uint32_t AlarmOn = 0;							// 1 if alarm is on
-static uint32_t AlarmTime = 0;						// time of alarm
-static uint32_t HomeState = 0;
-static uint32_t BaseTime = 0;
-static uint32_t NewTime = 0;
-static uint32_t OldTime = 0;
-static uint32_t UpdateState = 1;
-static uint32_t ADCInitial = 0;
-extern uint32_t AtomicTime;								// current time
-extern uint32_t ADCValue;
+static uint32_t State;							// current state
+static uint32_t Ringing = 0;				// 1 if alarm is ringing
+static uint32_t AlarmOn = 0;				// 1 if alarm is on
+static uint32_t AlarmTime = 0;			// time of alarm
+static uint32_t HomeState = 0;			// state to go back to, stanard or military
+static uint32_t BaseTime = 0;				// used to start adc sample wherever adc is now
+static uint32_t NewTime = 0;				// replaces AtomicTime/AlarmTime if user sets new value
+static uint32_t OldTime = 0;				// used to check if time needs to be redrawn
+static uint32_t UpdateState = 1;		// used to check if state has changed
+static uint32_t ADCInitial = 0;			// base value of adc for changing time
+extern uint32_t AtomicTime;					// current time
+extern uint32_t ADCValue;						// ADC sampling value
 
 // start set time state, or move to next state
 void Button1SetTime(void) { 
-	if(Ringing) {
+	if(Ringing) {															// if ringing, turn off
 		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
 		Ringing = 0;
-	} else if(State == SET_TIME_HOUR) {
+	} else if(State == SET_TIME_HOUR) {				// set minutes for new time
 		NewTime = ADC_READ_HOUR;
 		ADCInitial = ADCValue;
 		State = SET_TIME_MINUTE;
-	} else if (State == SET_TIME_MINUTE) {
+	} else if (State == SET_TIME_MINUTE) {		// set new time
 		NewTime += ADC_READ_MINUTE;
 		SetTime(NewTime);
 		State = HomeState;
-	} else {
+	} else {																	// set hours for new time
 		BaseTime = AtomicTime;
 		ADCInitial = ADCValue;
 		State = SET_TIME_HOUR;
@@ -491,18 +496,19 @@ void Button1SetTime(void) {
 
 // start set alarm state, or move to next state
 void Button2SetAlarm(void) {
-	if(Ringing) {
+	if(Ringing) {															// if ringing, turn off
 		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
 		Ringing = 0;
-	} else if(State == SET_ALARM_HOUR) {
+		AlarmOn = 0;
+	} else if(State == SET_ALARM_HOUR) {			// set minutes for new alarm time
 		NewTime = ADC_READ_HOUR;
 		ADCInitial = ADCValue;
 		State = SET_ALARM_MINUTE;
-	} else if (State == SET_ALARM_MINUTE) {
+	} else if (State == SET_ALARM_MINUTE) {		// set new alarm time
 		NewTime += ADC_READ_MINUTE;
 		AlarmTime = NewTime;
 		State = HomeState;
-	} else {
+	} else {																	// set hours for new alarm time
 		BaseTime = AlarmTime;
 		ADCInitial = ADCValue;
 		State = SET_ALARM_HOUR;
@@ -512,10 +518,11 @@ void Button2SetAlarm(void) {
 
 // enable/disable alarm
 void Buttton3ToggleAlarm(void) {
-	if(Ringing) {
+	if(Ringing) {					// if ringing, turn off
 		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
 		Ringing = 0;
-	} else {
+		AlarmOn = 0;
+	} else {							// toggle alarm
 		AlarmOn = 1 - AlarmOn;
 	}
 	UpdateState = 1;
@@ -523,46 +530,53 @@ void Buttton3ToggleAlarm(void) {
 
 // move to next state
 void Button4ChangeMode(void) {
-	if(Ringing) {
+	if(Ringing) {															// if ringing, turn off
 		TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
 		Ringing = 0;
-	} else if(State == STANDARD_CLOCK) {
+		AlarmOn = 0;
+	} else if(State == STANDARD_CLOCK) {			// change to military clock
 		HomeState = MILITARY_CLOCK;
 		State = MILITARY_CLOCK;
-	} else if(State == MILITARY_CLOCK) {
+	} else if(State == MILITARY_CLOCK) {			// change to standard clock
 		HomeState = STANDARD_CLOCK;
 		State = STANDARD_CLOCK;
-	} else {
+	} else {																	// cancel current operation
 		State = HomeState;
 	}
 	UpdateState = 1;
 }
 
+// center of clock
 const uint32_t X_CLOCK_CENTER=64;
 const uint32_t Y_CLOCK_CENTER=110;
 
+
+// function to draw hour and minute hands of clock
 void DrawHands(uint32_t time, uint16_t color) {
+	// hour hand
 	uint32_t angleHour = (((time/100) % 12)*60 + time%100)/12;
 	uint32_t xValueHour = X_CLOCK_CENTER + SIN_FIXED[angleHour]/5;
 	uint32_t yValueHour = Y_CLOCK_CENTER - COS_FIXED[angleHour]/5;
 	ST7735_Line(X_CLOCK_CENTER, Y_CLOCK_CENTER, xValueHour, yValueHour, color);
 	
+	// minute hand
 	uint32_t angleMinute = time%100;
 	uint32_t xValueMinute = X_CLOCK_CENTER + SIN_FIXED[angleMinute]/4;
 	uint32_t yValueMinute = Y_CLOCK_CENTER - COS_FIXED[angleMinute]/4;
 	ST7735_Line(X_CLOCK_CENTER, Y_CLOCK_CENTER, xValueMinute, yValueMinute, color);
 }
 
+// draw digital time
 void DrawDigital(uint32_t time) {
-	if(HomeState == STANDARD_CLOCK) {
+	if(HomeState == STANDARD_CLOCK) {		// if home is standard
 			if((time/100)%12 == 0){
-				ST7735_OutUDec(12); //0 hours = 12AM, 12 hours = 12PM
+				ST7735_OutUDec(12); 					//0 hours = 12AM, 12 hours = 12PM
 			}
 			else{
 				ST7735_OutUDec((time/100)%12);
 			}
 			ST7735_OutString(":");
-			if(time%100 < 10) //make minutes < 10 two digits
+			if(time%100 < 10) 							//make minutes < 10 two digits
 				ST7735_OutUDec(0);
 			ST7735_OutUDec(time%100);
 			if(time/100 < 12){
@@ -571,69 +585,77 @@ void DrawDigital(uint32_t time) {
 			else{
 				ST7735_OutString(" PM");
 			}
-		} else {
-			ST7735_OutUDec(time/100);
+		} else {													// if home is military
+			if(time/100 == 0) {
+				ST7735_OutUDec(24);
+			} else {
+				ST7735_OutUDec(time/100);
+			}
 			ST7735_OutString(":");
-			if(time%100 < 10) //make minutes < 10 two digits
+			if(time%100 < 10) 							//make minutes < 10 two digits
 				ST7735_OutUDec(0);
 			ST7735_OutUDec(time%100);
 		}
 }
 
-// draw clock and lines
+// Draw screen with title and analog and digital clocks
 void DrawClock(char* title, uint32_t time) {
-	if(UpdateState || OldTime != time) {
-		// clear old values 
-		DrawHands(OldTime, ST7735_BLACK);
-		// draw title
-		ST7735_SetCursor(0,0);
-		ST7735_FillRect(0,0,127,10,ST7735_BLACK);
-		ST7735_OutString(title);
-		ST7735_OutString("\rAlarm ");
-		if(AlarmOn) {
-			ST7735_OutString("On ");
-			DrawDigital(AlarmTime);
-		} else {
-			ST7735_OutString("Off        ");
-		}
-		
-		DrawHands(time, ST7735_WHITE);
+	DrawHands(OldTime, ST7735_BLACK);		// clear old values 
+	ST7735_SetCursor(0,0);
+	ST7735_FillRect(0,0,127,10,ST7735_BLACK);
+	ST7735_OutString(title);						// draw title
+	ST7735_OutString("\rAlarm ");				// draw alarm status and time
+	if(AlarmOn) {
+		ST7735_OutString("On ");
+		DrawDigital(AlarmTime);
+	} else {
+		ST7735_OutString("Off        ");
+	}
+	if(UpdateState || time != OldTime) {
+		DrawHands(time, ST7735_WHITE);			// draw hands
 		ST7735_OutString("\r");
-		// draw standard vs military
-		DrawDigital(time);
+		DrawDigital(time);									// draw standard vs military
 		OldTime = time;
-
-		UpdateState = 0;
 	}
 }
 
 void DisplayClock(void) {
-	uint32_t time = AtomicTime;
-	char* screen;
-	if(State == STANDARD_CLOCK) {					// draw clock with time from systick
-		screen = "Clock";
-	} else if(State == MILITARY_CLOCK) {	// draw clock with time from systick
-		screen = "Clock";
-	} else if(State == SET_TIME_HOUR) {		// draw clock with time from start time 
-																				// from systick offset by adc
-		uint32_t time2 = ADC_READ_HOUR;
-		time = time2 + BaseTime % 100;
-		screen = "Set Time - Hours";
-	} else if(State == SET_TIME_MINUTE) {	// draw clock with time from start time 
-																				// from systick offset by adc
-		uint32_t time2 = ADC_READ_MINUTE;
-		time = (NewTime/100)*100 + time2;
-		screen = "Set Time - Minutes";
-	} else if(State == SET_ALARM_HOUR) {	// draw clock with alarm time offset by adc
-		uint32_t time2 = ADC_READ_HOUR;
-		time = time2 + BaseTime % 100;
-		screen = "Set Alarm - Hours";
-	} else if(State == SET_ALARM_MINUTE) {	// draw clock with alarm time offset by adc
-		uint32_t time2 = ADC_READ_MINUTE;
-		time = (NewTime/100)*100 + time2;
-		screen = "Set Alarm - Minutes";
+										// start alarm
+	if(AlarmOn && AlarmTime == AtomicTime) {
+		Ringing = 1;
+		TIMER2_CTL_R |= TIMER_CTL_TAEN;
+	} 
+	
+	if(UpdateState) {
+		uint32_t time = AtomicTime;
+		char* screen;
+		if(State == STANDARD_CLOCK) {					// draw clock with time from systick
+			screen = "Clock";
+		} else if(State == MILITARY_CLOCK) {	// draw clock with time from systick
+			screen = "Clock";
+		} else if(State == SET_TIME_HOUR) {		// draw clock with time from start time 
+																					// from systick offset by adc
+			uint32_t time2 = ADC_READ_HOUR;
+			time = time2 + BaseTime % 100;
+			screen = "Set Time - Hours";
+		} else if(State == SET_TIME_MINUTE) {	// draw clock with time from start time 
+																					// from systick offset by adc
+			uint32_t time2 = ADC_READ_MINUTE;
+			time = (NewTime/100)*100 + time2;
+			screen = "Set Time - Minutes";
+		} else if(State == SET_ALARM_HOUR) {	// draw clock with alarm time offset by adc
+			uint32_t time2 = ADC_READ_HOUR;
+			time = time2 + BaseTime % 100;
+			screen = "Set Alarm - Hours";
+		} else if(State == SET_ALARM_MINUTE) {// draw clock with alarm time offset by adc
+			uint32_t time2 = ADC_READ_MINUTE;
+			time = (NewTime/100)*100 + time2;
+			screen = "Set Alarm - Minutes";
+		}
+		DrawClock(screen,time);
+
+		UpdateState = 0;
 	}
-	DrawClock(screen,time);
 }
 
 // Subroutine to wait 10 msec
@@ -664,11 +686,7 @@ int main(void) {
 	EnableInterrupts();
 	
 	while(1) {
-		DisplayClock();
-		if(AlarmOn && AlarmTime == AtomicTime) {
-			Ringing = 1;
-			TIMER2_CTL_R |= TIMER_CTL_TAEN;
-		} 
+		DisplayClock();		// display clock
 	}
 }
 

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Clock.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Clock.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Tue Feb 14 04:18:22 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Tue Feb 14 09:23:07 2017
 <BR><P>
 <H3>Maximum Stack Usage =        216 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -699,7 +699,7 @@ Global Symbols
 
 <P><STRONG><a name="[ba]"></a>DisableInterrupts</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, startup.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer2_Arm
-<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer2A_Init100HzInt
+<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer1A_Init100HzInt
 </UL>
 
 <P><STRONG><a name="[bd]"></a>EnableInterrupts</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, startup.o(.text))
@@ -766,9 +766,9 @@ Global Symbols
 
 <P><STRONG><a name="[97]"></a>ADC0_InitSWTriggerSeq3_Ch9</STRONG> (Thumb, 212 bytes, Stack size 8 bytes, adcswtrigger.o(i.ADC0_InitSWTriggerSeq3_Ch9))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16 + Unknown Stack Size
-<LI>Call Chain = ADC0_InitSWTriggerSeq3_Ch9 &rArr; Timer2A_Init100HzInt
+<LI>Call Chain = ADC0_InitSWTriggerSeq3_Ch9 &rArr; Timer1A_Init100HzInt
 </UL>
-<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer2A_Init100HzInt
+<BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer1A_Init100HzInt
 </UL>
 <BR>[Called By]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -780,13 +780,13 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> clockmain.o(i.main)
 </UL>
-<P><STRONG><a name="[81]"></a>Button2SetAlarm</STRONG> (Thumb, 216 bytes, Stack size 0 bytes, clockmain.o(i.Button2SetAlarm))
+<P><STRONG><a name="[81]"></a>Button2SetAlarm</STRONG> (Thumb, 220 bytes, Stack size 0 bytes, clockmain.o(i.Button2SetAlarm))
 <BR>[Address Reference Count : 1]<UL><LI> clockmain.o(i.main)
 </UL>
-<P><STRONG><a name="[7f]"></a>Button4ChangeMode</STRONG> (Thumb, 80 bytes, Stack size 0 bytes, clockmain.o(i.Button4ChangeMode))
+<P><STRONG><a name="[7f]"></a>Button4ChangeMode</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, clockmain.o(i.Button4ChangeMode))
 <BR>[Address Reference Count : 1]<UL><LI> clockmain.o(i.main)
 </UL>
-<P><STRONG><a name="[80]"></a>Buttton3ToggleAlarm</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, clockmain.o(i.Buttton3ToggleAlarm))
+<P><STRONG><a name="[80]"></a>Buttton3ToggleAlarm</STRONG> (Thumb, 50 bytes, Stack size 0 bytes, clockmain.o(i.Buttton3ToggleAlarm))
 <BR>[Address Reference Count : 1]<UL><LI> clockmain.o(i.main)
 </UL>
 <P><STRONG><a name="[bb]"></a>Delay1ms</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, st7735.o(i.Delay1ms))
@@ -796,7 +796,7 @@ Global Symbols
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;commandList
 </UL>
 
-<P><STRONG><a name="[9a]"></a>DisplayClock</STRONG> (Thumb, 354 bytes, Stack size 16 bytes, clockmain.o(i.DisplayClock))
+<P><STRONG><a name="[9a]"></a>DisplayClock</STRONG> (Thumb, 410 bytes, Stack size 16 bytes, clockmain.o(i.DisplayClock))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = DisplayClock &rArr; DrawClock &rArr; DrawDigital &rArr; ST7735_OutString &rArr; ST7735_OutChar &rArr; ST7735_DrawString &rArr; ST7735_DrawCharS &rArr; ST7735_FillRect &rArr; setAddrWindow
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DrawClock
@@ -804,7 +804,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[9b]"></a>DrawClock</STRONG> (Thumb, 126 bytes, Stack size 16 bytes, clockmain.o(i.DrawClock))
+<P><STRONG><a name="[9b]"></a>DrawClock</STRONG> (Thumb, 120 bytes, Stack size 16 bytes, clockmain.o(i.DrawClock))
 <BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = DrawClock &rArr; DrawDigital &rArr; ST7735_OutString &rArr; ST7735_OutChar &rArr; ST7735_DrawString &rArr; ST7735_DrawCharS &rArr; ST7735_FillRect &rArr; setAddrWindow
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7735_SetCursor
@@ -816,7 +816,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DisplayClock
 </UL>
 
-<P><STRONG><a name="[a0]"></a>DrawDigital</STRONG> (Thumb, 184 bytes, Stack size 16 bytes, clockmain.o(i.DrawDigital))
+<P><STRONG><a name="[a0]"></a>DrawDigital</STRONG> (Thumb, 200 bytes, Stack size 16 bytes, clockmain.o(i.DrawDigital))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = DrawDigital &rArr; ST7735_OutString &rArr; ST7735_OutChar &rArr; ST7735_DrawString &rArr; ST7735_DrawCharS &rArr; ST7735_FillRect &rArr; setAddrWindow
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7735_OutUDec
@@ -978,7 +978,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[c]"></a>SysTick_Handler</STRONG> (Thumb, 110 bytes, Stack size 0 bytes, systickdriver.o(i.SysTick_Handler))
+<P><STRONG><a name="[c]"></a>SysTick_Handler</STRONG> (Thumb, 138 bytes, Stack size 0 bytes, systickdriver.o(i.SysTick_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
 </UL>
 <P><STRONG><a name="[b6]"></a>SysTick_Init</STRONG> (Thumb, 150 bytes, Stack size 8 bytes, systickdriver.o(i.SysTick_Init))
@@ -1005,18 +1005,18 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
 </UL>
-<P><STRONG><a name="[24]"></a>Timer2A_Handler</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, speakerdriver.o(i.Timer2A_Handler))
-<BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
-</UL>
-<P><STRONG><a name="[98]"></a>Timer2A_Init100HzInt</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, adcswtrigger.o(i.Timer2A_Init100HzInt))
+<P><STRONG><a name="[98]"></a>Timer1A_Init100HzInt</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, adcswtrigger.o(i.Timer1A_Init100HzInt))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
-<LI>Call Chain = Timer2A_Init100HzInt
+<LI>Call Chain = Timer1A_Init100HzInt
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DisableInterrupts
 </UL>
 <BR>[Called By]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC0_InitSWTriggerSeq3_Ch9
 </UL>
 
+<P><STRONG><a name="[24]"></a>Timer2A_Handler</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, speakerdriver.o(i.Timer2A_Handler))
+<BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
+</UL>
 <P><STRONG><a name="[b1]"></a>fillmessage</STRONG> (Thumb, 64 bytes, Stack size 12 bytes, st7735.o(i.fillmessage))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12 + In Cycle
 <LI>Call Chain = fillmessage &rArr;  fillmessage (Cycle)
@@ -1027,7 +1027,7 @@ Global Symbols
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7735_OutUDec
 </UL>
 
-<P><STRONG><a name="[8e]"></a>main</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, clockmain.o(i.main))
+<P><STRONG><a name="[8e]"></a>main</STRONG> (Thumb, 104 bytes, Stack size 8 bytes, clockmain.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216 + Unknown Stack Size
 <LI>Call Chain = main &rArr; DisplayClock &rArr; DrawClock &rArr; DrawDigital &rArr; ST7735_OutString &rArr; ST7735_OutChar &rArr; ST7735_DrawString &rArr; ST7735_DrawCharS &rArr; ST7735_FillRect &rArr; setAddrWindow
 </UL>

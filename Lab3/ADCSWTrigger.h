@@ -92,8 +92,8 @@ uint32_t ADC0_InSeq3(void);
 
 // This debug function initializes Timer0A to request interrupts
 // at a 100 Hz frequency.  It is similar to FreqMeasure.c.
-void Timer2A_Init100HzInt(void);
+void Timer1A_Init100HzInt(void);
 
 
 // Interrupt handler that reads ADC value and stores in dump 
-void Timer2A_Handler(void);
+void Timer1A_Handler(void);

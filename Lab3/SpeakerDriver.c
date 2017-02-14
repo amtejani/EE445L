@@ -26,9 +26,9 @@ static void Timer2_Arm(void){
   volatile uint32_t delay;
   DisableInterrupts();
   // **** general initialization ****
-  SYSCTL_RCGCTIMER_R |= 0x04;      // activate timer0
+  SYSCTL_RCGCTIMER_R |= 0x04;      // activate timer2
   delay = SYSCTL_RCGCTIMER_R;      // allow time to finish activating
-  TIMER2_CTL_R &= ~TIMER_CTL_TAEN; // disable timer0A during setup
+  TIMER2_CTL_R &= ~TIMER_CTL_TAEN; // disable timer2A during setup
   TIMER2_CFG_R = 0;                // configure for 32-bit timer mode
   // **** timer0A initialization ****
                                    // configure for periodic mode
@@ -38,7 +38,7 @@ static void Timer2_Arm(void){
   TIMER2_ICR_R = TIMER_ICR_TATOCINT;// clear timer0A timeout flag
   TIMER2_CTL_R |= TIMER_CTL_TAEN;  // enable timer0A 32-b, periodic, interrupts
   // **** interrupt initialization ****
-                                   // Timer2=priority 1
+                                   // Timer2=priority 4
   NVIC_PRI5_R = (NVIC_PRI5_R&0x00FFFFFF)|0x80000000; // top 3 bits
   NVIC_EN0_R = 1<<23;              // enable interrupt 19 in NVIC
 }
