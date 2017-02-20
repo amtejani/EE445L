@@ -1,5 +1,5 @@
 Dependencies for Project 'getWeather', Target 'getWeather': (DO NOT MODIFY !)
-F (.\main.c)(0x58A55CA4)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\ -I..\..\..\.. -I..\cc3100 -I..\cc3100\platform\ek-tm4c123gxl -I..\cc3100\simplelink\include -I..\cc3100\simplelink\source --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_TM4C123GH6PM -D_POSIX_SOURCE -DUART_BUFFERED -DTARGET_IS_TM4C123_RB1-o .\rvmdk\main.o --omf_browse .\rvmdk\main.crf --depend .\rvmdk\main.d)
+F (.\main.c)(0x58AB2CFE)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\ -I..\..\..\.. -I..\cc3100 -I..\cc3100\platform\ek-tm4c123gxl -I..\cc3100\simplelink\include -I..\cc3100\simplelink\source --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_TM4C123GH6PM -D_POSIX_SOURCE -DUART_BUFFERED -DTARGET_IS_TM4C123_RB1-o .\rvmdk\main.o --omf_browse .\rvmdk\main.crf --depend .\rvmdk\main.d)
 I (..\cc3100\simplelink\include\simplelink.h)(0x53A3030E)
 I (..\cc3100\platform\ek-tm4c123gxl\user.h)(0x53A3030E)
 I (C:\Keil\ARM\ARMCC\include\string.h)(0x51C87C24)
@@ -308,7 +308,7 @@ I (..\driverlib/debug.h)(0x5388C29A)
 I (..\utils/ustdlib.h)(0x5388C2EC)
 I (C:\Keil\ARM\ARMCC\include\stdarg.h)(0x51C87C24)
 I (C:\Keil\ARM\ARMCC\include\time.h)(0x51C87C24)
-F (.\ADCSWTrigger.c)(0x58A5376A)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\ -I..\..\..\.. -I..\cc3100 -I..\cc3100\platform\ek-tm4c123gxl -I..\cc3100\simplelink\include -I..\cc3100\simplelink\source --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_TM4C123GH6PM -D_POSIX_SOURCE -DUART_BUFFERED -DTARGET_IS_TM4C123_RB1-o .\rvmdk\adcswtrigger.o --omf_browse .\rvmdk\adcswtrigger.crf --depend .\rvmdk\adcswtrigger.d)
+F (.\ADCSWTrigger.c)(0x58AB261D)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\ -I..\..\..\.. -I..\cc3100 -I..\cc3100\platform\ek-tm4c123gxl -I..\cc3100\simplelink\include -I..\cc3100\simplelink\source --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_TM4C123GH6PM -D_POSIX_SOURCE -DUART_BUFFERED -DTARGET_IS_TM4C123_RB1-o .\rvmdk\adcswtrigger.o --omf_browse .\rvmdk\adcswtrigger.crf --depend .\rvmdk\adcswtrigger.d)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 F (.\ST7735.c)(0x589B95D2)(-c --cpu Cortex-M4.fp -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\ -I..\..\..\.. -I..\cc3100 -I..\cc3100\platform\ek-tm4c123gxl -I..\cc3100\simplelink\include -I..\cc3100\simplelink\source --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\Luminary-Drvmdk -DPART_TM4C123GH6PM -D_POSIX_SOURCE -DUART_BUFFERED -DTARGET_IS_TM4C123_RB1-o .\rvmdk\st7735.o --omf_browse .\rvmdk\st7735.crf --depend .\rvmdk\st7735.d)

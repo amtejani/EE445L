@@ -80,7 +80,7 @@ void SysTick_Init(){long sr;
 void SysTick_Handler(void) {
 	MilliSeconds = (MilliSeconds + 1) % 1000;
 	if(MilliSeconds == 0) {
-	PF2 ^= 0x04; // heartbeat
+	//F2 ^= 0x04; // heartbeat
 		Seconds = (Seconds + 1) % 60;		// increment seconds
 		if (Seconds == 0) {
 			Minutes = (Minutes + 1) % 60;	// increment minutes if 60 seconds have passed	

@@ -468,7 +468,6 @@ static uint32_t HomeState = 0;			// state to go back to, stanard or military
 static uint32_t BaseTime = 0;				// used to start adc sample wherever adc is now
 static uint32_t NewTime = 0;				// replaces AtomicTime/AlarmTime if user sets new value
 static uint32_t OldTime = 0;				// used to check if time needs to be redrawn
-static uint32_t UpdateState = 1;		// used to check if state has changed
 static uint32_t ADCInitial = 0;			// base value of adc for changing time
 extern uint32_t AtomicTime;					// current time
 extern uint32_t ADCValue;						// ADC sampling value
@@ -491,7 +490,6 @@ void Button1SetTime(void) {
 		ADCInitial = ADCValue;
 		State = SET_TIME_HOUR;
 	}
-	UpdateState = 1;
 }
 
 // start set alarm state, or move to next state
@@ -513,7 +511,6 @@ void Button2SetAlarm(void) {
 		ADCInitial = ADCValue;
 		State = SET_ALARM_HOUR;
 	}
-	UpdateState = 1;
 }
 
 // enable/disable alarm
@@ -525,7 +522,6 @@ void Buttton3ToggleAlarm(void) {
 	} else {							// toggle alarm
 		AlarmOn = 1 - AlarmOn;
 	}
-	UpdateState = 1;
 }
 
 // move to next state
@@ -543,7 +539,6 @@ void Button4ChangeMode(void) {
 	} else {																	// cancel current operation
 		State = HomeState;
 	}
-	UpdateState = 1;
 }
 
 // center of clock
@@ -597,11 +592,12 @@ void DrawDigital(uint32_t time) {
 			ST7735_OutUDec(time%100);
 		}
 }
+#define PF2             (*((volatile uint32_t *)0x40025010))
+
 
 // Draw screen with title and analog and digital clocks
 void DrawClock(char* title, uint32_t time) {
 	
-	if(UpdateState || time != OldTime) {
 		DrawHands(OldTime, ST7735_BLACK);		// clear old values 
 		ST7735_SetCursor(0,0);
 		ST7735_FillRect(0,0,127,10,ST7735_BLACK);
@@ -613,13 +609,12 @@ void DrawClock(char* title, uint32_t time) {
 		} else {
 			ST7735_OutString("Off        ");
 		}
-		if(UpdateState || time != OldTime) {
-			DrawHands(time, ST7735_WHITE);			// draw hands
-			ST7735_OutString("\r");
-			DrawDigital(time);									// draw standard vs military
-			OldTime = time;
-		}
-	}
+		DrawHands(time, ST7735_WHITE);			// draw hands
+		ST7735_OutString("\r");
+		DrawDigital(time);									// draw standard vs military
+		OldTime = time;
+		
+
 }
 
 void DisplayClock(void) {
@@ -656,10 +651,7 @@ void DisplayClock(void) {
 		screen = "Set Alarm - Minutes";
 	}
 	
-	if(UpdateState || time != OldTime) {
 	DrawClock(screen,time);
-	}
-	UpdateState = 0;
 	
 }
 
@@ -692,7 +684,7 @@ int main(void) {
 	
 	while(1) {
 		DisplayClock();		// display clock
-		//DelayWait10ms(100);
+		DelayWait10ms(100);
 	}
 }
 

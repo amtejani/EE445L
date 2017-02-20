@@ -209,6 +209,8 @@ void Crash(uint32_t time){
 
 char* ParseBuffer(char*);
 void ReadVoltage(void);
+int CompareString(char* str1, char* str2, uint32_t size);
+
 /*
  * Application's entry point
  */
@@ -223,7 +225,8 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
   char *pConfig = NULL; INT32 ASize = 0; SlSockAddrIn_t  Addr;
   initClk();        // PLL 50 MHz
   UART_Init();      // Send data to PC, 115200 bps
-  LED_Init();       // initialize LaunchPad I/O 
+  LED_Init();       // initialize LaunchPad I/O
+	ADC0_InitSWTriggerSeq3_Ch9(); //initialize ADC
   UARTprintf("Weather App\n");
   retVal = configureSimpleLinkToDefaultState(pConfig); // set policies
   if(retVal < 0)Crash(4000000);
@@ -261,8 +264,9 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
         UARTprintf(Recvbuff);  UARTprintf("\r\n");
       }
     }
-		char* st = ParseBuffer(Recvbuff);
-		ST7735_OutString(st);
+		ST7735_FillScreen(ST7735_BLACK);
+		ST7735_SetCursor(0,0);
+		ST7735_OutString(ParseBuffer(Recvbuff)); //print out current temperature
 		ReadVoltage();
     while(Board_Input()==0){}; // wait for touch
     LED_GreenOff();
@@ -576,30 +580,31 @@ char* ParseBuffer(char* recvbuff){
 		if(recvbuff[i] == 't'){
 			int result = CompareString(&recvbuff[i+1],"emp\":",5);
 			if(result){
-				for(j=i+6; j<TEMP_STRING_SIZE; ++j){
-					if(recvbuff[j] == ','){
-						recvbuff[j+1] = ' ';
-						recvbuff[j+2] = 'F';
-						ST7735_OutString(Temp);
-						return Temp;
-					}
-					Temp[k] = recvbuff[i+6];
+				j=i+6;	//start of actual temperature
+				while(recvbuff[j] != ','){	//fill in all digits of temperature
+					Temp[k] = recvbuff[j];
 					++k;
-				}					
+					++j;
+				}
+				Temp[k] = ' ';
+				Temp[k+1] = 'F';	//fahrenheit since units = imperial
+				return Temp;
 			}
 		}
 	}
-	return "0";
+	return "0";	//didn't find temp
 }
 
 //reads ADC, converts to Volts in range 0-3.300V, displays to LCD
 void ReadVoltage(void){
 	uint32_t ADCVal = ADC0_InSeq3();
+	ST7735_OutUDec(ADCVal);
 	uint32_t voltage = (ADCVal * 3300 + 2048)/4096;  //converts value to fixed point resolution .001
-	ST7735_OutString("Voltage~");
+	ST7735_OutString("\rVoltage~");
 	ST7735_OutUDec(voltage/1000);
 	ST7735_OutChar('.');
 	ST7735_OutUDec(voltage%1000);
+	ST7735_OutChar('V');
 }
 	
 	
