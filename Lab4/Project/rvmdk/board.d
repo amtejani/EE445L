@@ -24,7 +24,7 @@
 .\rvmdk\board.o: ..\cc3100\simplelink\include\simplelink.h
 .\rvmdk\board.o: ..\cc3100\simplelink\include\wlan_rx_filters.h
 .\rvmdk\board.o: ..\cc3100\simplelink\include\simplelink.h
-.\rvmdk\board.o: ..\cc3100\../inc/tm4c123gh6pm.h
+.\rvmdk\board.o: ..\../inc/tm4c123gh6pm.h
 .\rvmdk\board.o: ..\inc/hw_memmap.h
 .\rvmdk\board.o: ..\inc/hw_ssi.h
 .\rvmdk\board.o: ..\inc/hw_types.h

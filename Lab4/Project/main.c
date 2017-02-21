@@ -174,6 +174,9 @@ const int TEMP_STRING_SIZE = 15;
 const int TEMP_START_INDEX = 7;
 char Temp[TEMP_STRING_SIZE] = {'T','e','m','p',' ','=',' '};
 
+const int VOLT_STRING_SIZE = 14;
+const int VOLT_START_INDEX = 8;
+
 
 typedef enum{
     CONNECTED = 0x01,
@@ -208,8 +211,12 @@ void Crash(uint32_t time){
 }
 
 char* ParseBuffer(char*);
-void ReadVoltage(void);
+void ReadVoltage(char*);
 int CompareString(char* str1, char* str2, uint32_t size);
+void CommunicateWithServer(char* hostName, char* sendBuffer, char* recvBuffer, char* request);
+void ConnectWithAccessPoint(void);
+
+
 
 /*
  * Application's entry point
@@ -220,14 +227,49 @@ int CompareString(char* str1, char* str2, uint32_t size);
 // 1) go to http://openweathermap.org/appid#use 
 // 2) Register on the Sign up page
 // 3) get an API key (APPID) replace the 1234567890abcdef1234567890abcdef with your APPID
-int main(void){int32_t retVal;  SlSecParams_t secParams;
+#define VOLTAGE_REQUEST_BEGIN "GET /query?city=Austin%20Texas&id=Caroline,%20Ali&greet="
+#define VOLTAGE_REQUEST_END " HTTP/1.1\r\nUser-Agent: Keil\r\nHost: ee445l-chy253amt3639.appspot.com\r\n\r\n"
+#define TCPPAYLOAD_MAX_SIZE strlen(VOLTAGE_REQUEST_END)+strlen(VOLTAGE_REQUEST_BEGIN)+VOLT_STRING_SIZE
+
+char GlobalPayload[141];
+int main(void){
+
 	ST7735_InitR(INITR_REDTAB);
-  char *pConfig = NULL; INT32 ASize = 0; SlSockAddrIn_t  Addr;
+  
   initClk();        // PLL 50 MHz
   UART_Init();      // Send data to PC, 115200 bps
   LED_Init();       // initialize LaunchPad I/O
 	ADC0_InitSWTriggerSeq3_Ch9(); //initialize ADC
-  UARTprintf("Weather App\n");
+  ConnectWithAccessPoint();
+
+  while(1){
+   // strcpy(HostName,"openweathermap.org");  // used to work 10/2015
+    strcpy(HostName,"api.openweathermap.org"); // works 9/2016
+		CommunicateWithServer("api.openweathermap.org",SendBuff,Recvbuff,REQUEST);
+		ST7735_FillScreen(ST7735_BLACK);
+		ST7735_SetCursor(0,0);
+		ST7735_OutString(ParseBuffer(Recvbuff)); //print out current temperature
+		LED_GreenOff();
+		
+		uint32_t payloadMaxSize = strlen(VOLTAGE_REQUEST_END)+strlen(VOLTAGE_REQUEST_BEGIN)+VOLT_STRING_SIZE;
+		char TCPPayload[payloadMaxSize];
+		char Volt[VOLT_STRING_SIZE] = "Voltage~";
+		ReadVoltage(Volt); //fills Volt array
+		//memset(&TCPPayload,0,TCPPAYLOAD_MAX_SIZE);
+		strcpy(TCPPayload, VOLTAGE_REQUEST_BEGIN);
+	//strncpy(GlobalPayload,payload,TCPPAYLOAD_MAX_SIZE);
+		strcat(TCPPayload, Volt);
+		strcat(TCPPayload, VOLTAGE_REQUEST_END);	
+		CommunicateWithServer("ee445l-chy253amt3639.appspot.com",SendBuff,Recvbuff,TCPPayload);
+		
+    while(Board_Input()==0){}; // wait for touch
+    LED_GreenOff();
+  }
+}
+
+void ConnectWithAccessPoint(void){
+	int32_t retVal;  SlSecParams_t secParams; char *pConfig = NULL; 
+	UARTprintf("Weather App\n");
   retVal = configureSimpleLinkToDefaultState(pConfig); // set policies
   if(retVal < 0)Crash(4000000);
   retVal = sl_Start(0, pConfig, 0);
@@ -240,11 +282,12 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
     _SlNonOsMainLoopTask();
   }
   UARTprintf("Connected\n");
-  while(1){
-   // strcpy(HostName,"openweathermap.org");  // used to work 10/2015
-    strcpy(HostName,"api.openweathermap.org"); // works 9/2016
-    retVal = sl_NetAppDnsGetHostByName(HostName,
-             strlen(HostName),&DestinationIP, SL_AF_INET);
+}
+
+void CommunicateWithServer(char* hostName, char* sendBuffer, char* recvBuffer, char* request){
+	int32_t retVal; INT32 ASize = 0; SlSockAddrIn_t  Addr;
+  retVal = sl_NetAppDnsGetHostByName(hostName,
+             strlen(hostName),&DestinationIP, SL_AF_INET);
     if(retVal == 0){
       Addr.sin_family = SL_AF_INET;
       Addr.sin_port = sl_Htons(80);
@@ -255,22 +298,15 @@ int main(void){int32_t retVal;  SlSecParams_t secParams;
         retVal = sl_Connect(SockID, ( SlSockAddr_t *)&Addr, ASize);
       }
       if((SockID >= 0)&&(retVal >= 0)){
-        strcpy(SendBuff,REQUEST); 
-        sl_Send(SockID, SendBuff, strlen(SendBuff), 0);// Send the HTTP GET 
-        sl_Recv(SockID, Recvbuff, MAX_RECV_BUFF_SIZE, 0);// Receive response 
+        strcpy(sendBuffer,request); 
+        sl_Send(SockID, sendBuffer, strlen(sendBuffer), 0);// Send the HTTP GET 
+        sl_Recv(SockID, recvBuffer, MAX_RECV_BUFF_SIZE, 0);// Receive response 
         sl_Close(SockID);
         LED_GreenOn();
         UARTprintf("\r\n\r\n");
-        UARTprintf(Recvbuff);  UARTprintf("\r\n");
+        UARTprintf(recvBuffer);  UARTprintf("\r\n");
       }
-    }
-		ST7735_FillScreen(ST7735_BLACK);
-		ST7735_SetCursor(0,0);
-		ST7735_OutString(ParseBuffer(Recvbuff)); //print out current temperature
-		ReadVoltage();
-    while(Board_Input()==0){}; // wait for touch
-    LED_GreenOff();
-  }
+		}
 }
 
 /*!
@@ -596,15 +632,18 @@ char* ParseBuffer(char* recvbuff){
 }
 
 //reads ADC, converts to Volts in range 0-3.300V, displays to LCD
-void ReadVoltage(void){
+void ReadVoltage(char* voltStr){
+	uint32_t i = VOLT_START_INDEX;
 	uint32_t ADCVal = ADC0_InSeq3();
-	ST7735_OutUDec(ADCVal);
 	uint32_t voltage = (ADCVal * 3300 + 2048)/4096;  //converts value to fixed point resolution .001
-	ST7735_OutString("\rVoltage~");
-	ST7735_OutUDec(voltage/1000);
-	ST7735_OutChar('.');
-	ST7735_OutUDec(voltage%1000);
-	ST7735_OutChar('V');
+	voltStr[i] = (char)(voltage/1000 + '0');	//fill voltStr with measured voltage values
+	voltStr[i+1] = '.';
+	voltStr[i+2] = (char)(voltage%1000/100 + '0');
+	voltStr[i+3] = (char)(voltage%100/10 + '0');
+	voltStr[i+4] = (char)(voltage%10 + '0');
+	voltStr[i+5] = 'V';
+	ST7735_OutChar('\r');
+	ST7735_OutString(voltStr);
 }
 	
 	
