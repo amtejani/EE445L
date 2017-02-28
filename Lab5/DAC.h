@@ -15,6 +15,6 @@ void DAC_Init(void);
 // ************ DAC_Out ****************
 // Outputs value to DAC
 // Inputs:	12 bit number to be sent to DAC
-void DAC_Init(uint32_t out);
+void DAC_Out(uint32_t out);
 
 

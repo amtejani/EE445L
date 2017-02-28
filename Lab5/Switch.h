@@ -23,3 +23,39 @@ void GPIOPortF_Handler(void);
 // Interrupt 10 ms after rising edge of PF0,1,4
 // Set last operation
 void Timer0A_Handler(void);
+
+// Wait for switch to be pressed PF0
+// There will be minimum time delay from touch to when this function returns
+// Inputs:  none
+// Outputs: none 
+void Switch1_WaitPress(void);
+
+// Wait for switch to be released, PF0
+// There will be minimum time delay from release to when this function returns
+// Inputs:  none
+// Outputs: none 
+void Switch1_WaitRelease(void);
+
+// Wait for switch to be pressed PF1
+// There will be minimum time delay from touch to when this function returns
+// Inputs:  none
+// Outputs: none 
+void Switch2_WaitPress(void);
+
+// Wait for switch to be released, PF1
+// There will be minimum time delay from release to when this function returns
+// Inputs:  none
+// Outputs: none 
+void Switch2_WaitRelease(void);
+
+// Wait for switch to be pressed PF4
+// There will be minimum time delay from touch to when this function returns
+// Inputs:  none
+// Outputs: none 
+void Switch3_WaitPress(void);
+
+// Wait for switch to be released, PF4
+// There will be minimum time delay from release to when this function returns
+// Inputs:  none
+// Outputs: none 
+void Switch3_WaitRelease(void);
