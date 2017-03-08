@@ -17,6 +17,8 @@
 #include "Timer2.h"
 #include "Timer3.h"
 
+#define PF2             (*((volatile uint32_t *)0x40025010))
+
 uint16_t Wave[64] = {  
   1024,1122,1219,1314,1407,1495,1580,1658,1731,1797,1855,
   1906,1948,1981,2005,2019,2024,2019,2005,1981,1948,1906,
@@ -97,6 +99,8 @@ void Track2_Read(void) {
 // Start next note
 // Executes every 1/8th beat
 void StartNewNote(void) {
+	PF2 ^= 0x04;
+	PF2 ^= 0x04;
 	SongCounter++;
 	if((*S).durations1[SongCounter] == 0) {				// if no note playing, turn off timer
 		// turn off timer
@@ -124,6 +128,7 @@ void StartNewNote(void) {
 	Timer2_Period((*S).track2[SongCounter]);
 	if(SongCounter - 1 >= (*S).length) 
 		Music_Rewind();
+	PF2 ^= 0x04;
 }
 
 // ************ Music_Init ***************
@@ -140,6 +145,14 @@ void Music_Init(song* s) {
 	Timer2_Init(Track2_Read,(*S).track2[SongCounter]);
 	// init timer3 for note duration
 	Timer3_Init(StartNewNote,eighthBeatLength);
+	// profile pf2
+  GPIO_PORTF_DIR_R |= 0x04;             // make PF2 out (built-in LED)
+  GPIO_PORTF_AFSEL_R &= ~0x04;          // disable alt funct on PF2
+  GPIO_PORTF_DEN_R |= 0x04;             // enable digital I/O on PF2, PF1
+                                        // configure PF2 as GPIO
+  GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R&0xFFFFF0FF)+0x00000000;
+  GPIO_PORTF_AMSEL_R = 0;               // disable analog functionality on PF
+	
 	// reset values
 	Track1Value = 0;
 	Track1NoteCounter = 0;

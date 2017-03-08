@@ -60,8 +60,8 @@ void DelayWait10ms(uint32_t n){uint32_t volatile time;
 
 int main(void) {
 	PLL_Init(Bus80MHz);				// init modules
-	Music_Init(&Song);
 	Switch_Init(PlayPause,ChangeInstrument,Music_Rewind);
+	Music_Init(&Song);
 	ST7735_InitR(INITR_REDTAB);
 	ST7735_OutString("Left Button:\r");
 	ST7735_OutString(" Rewind\r");
@@ -73,3 +73,5 @@ int main(void) {
 		// do nothing
 	}
 }
+
+	
