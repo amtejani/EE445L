@@ -193,10 +193,14 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>12</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>85</TopLine>
-      <CurrentLine>122</CurrentLine>
+      <TopLine>1</TopLine>
+<<<<<<< HEAD
+      <CurrentLine>118</CurrentLine>
+=======
+      <CurrentLine>1</CurrentLine>
+>>>>>>> 14f6f12cc4c20796bf1b93a21c25250bb9523733
       <bDave2>0</bDave2>
       <PathWithFileName>.\ADCSWTrigger.c</PathWithFileName>
       <FilenameWithoutPath>ADCSWTrigger.c</FilenameWithoutPath>
@@ -209,10 +213,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>17</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>257</TopLine>
-      <CurrentLine>669</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>677</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ClockMain.c</PathWithFileName>
       <FilenameWithoutPath>ClockMain.c</FilenameWithoutPath>
@@ -259,8 +263,13 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1020</TopLine>
+<<<<<<< HEAD
+      <TopLine>1</TopLine>
       <CurrentLine>1032</CurrentLine>
+=======
+      <TopLine>1621</TopLine>
+      <CurrentLine>1626</CurrentLine>
+>>>>>>> 14f6f12cc4c20796bf1b93a21c25250bb9523733
       <bDave2>0</bDave2>
       <PathWithFileName>.\ST7735.c</PathWithFileName>
       <FilenameWithoutPath>ST7735.c</FilenameWithoutPath>
@@ -275,8 +284,8 @@
       <Focus>0</Focus>
       <ColumnNumber>26</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>63</TopLine>
-      <CurrentLine>73</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\SwitchDriver.c</PathWithFileName>
       <FilenameWithoutPath>SwitchDriver.c</FilenameWithoutPath>
@@ -291,8 +300,13 @@
       <Focus>0</Focus>
       <ColumnNumber>28</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>49</TopLine>
-      <CurrentLine>65</CurrentLine>
+<<<<<<< HEAD
+      <TopLine>1</TopLine>
+      <CurrentLine>34</CurrentLine>
+=======
+      <TopLine>72</TopLine>
+      <CurrentLine>83</CurrentLine>
+>>>>>>> 14f6f12cc4c20796bf1b93a21c25250bb9523733
       <bDave2>0</bDave2>
       <PathWithFileName>.\SysTickDriver.c</PathWithFileName>
       <FilenameWithoutPath>SysTickDriver.c</FilenameWithoutPath>

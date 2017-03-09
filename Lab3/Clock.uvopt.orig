@@ -193,7 +193,11 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
+<<<<<<< HEAD
       <ColumnNumber>12</ColumnNumber>
+=======
+      <ColumnNumber>0</ColumnNumber>
+>>>>>>> 14f6f12cc4c20796bf1b93a21c25250bb9523733
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>85</TopLine>
       <CurrentLine>122</CurrentLine>
@@ -289,7 +293,11 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
+<<<<<<< HEAD
+      <ColumnNumber>30</ColumnNumber>
+=======
       <ColumnNumber>28</ColumnNumber>
+>>>>>>> 14f6f12cc4c20796bf1b93a21c25250bb9523733
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>49</TopLine>
       <CurrentLine>65</CurrentLine>

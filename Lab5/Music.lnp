@@ -1,0 +1,15 @@
+--cpu Cortex-M4
+".\dac.o"
+".\music.o"
+".\pll.o"
+".\switch.o"
+".\systickints.o"
+".\timer1.o"
+".\timer2.o"
+".\timer3.o"
+".\startup.o"
+".\musicmain.o"
+".\st7735.o"
+--ro-base 0x00000000 --entry 0x00000000 --rw-base 0x20000000 --entry Reset_Handler --first __Vectors --strict --summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Music.map" -o .\Music.axf

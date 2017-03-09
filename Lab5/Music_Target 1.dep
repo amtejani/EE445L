@@ -1,0 +1,47 @@
+Dependencies for Project 'Music', Target 'Target 1': (DO NOT MODIFY !)
+F (.\DAC.c)(0x58B4B59D)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\dac.o --omf_browse .\dac.crf --depend .\dac.d)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (DAC.h)(0x58B3A70A)
+F (.\Music.c)(0x58BC6A20)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\music.o --omf_browse .\music.crf --depend .\music.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+I (Music.h)(0x58B5A56E)
+I (DAC.h)(0x58B3A70A)
+I (SysTickInts.h)(0x554822AE)
+I (Timer1.h)(0x58B4B6C0)
+I (Timer2.h)(0x58B4B6BF)
+I (Timer3.h)(0x58B599A6)
+F (.\PLL.c)(0x554592D2)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\pll.o --omf_browse .\pll.crf --depend .\pll.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (PLL.h)(0x55462230)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+F (.\Switch.c)(0x58B4A568)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\switch.o --omf_browse .\switch.crf --depend .\switch.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (Switch.h)(0x58B4A59B)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+F (.\SysTickInts.c)(0x58B42C89)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\systickints.o --omf_browse .\systickints.crf --depend .\systickints.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+I (SysTickInts.h)(0x554822AE)
+F (.\Timer1.c)(0x58B4A5F9)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\timer1.o --omf_browse .\timer1.crf --depend .\timer1.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+F (.\Timer2.c)(0x58BC68F2)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\timer2.o --omf_browse .\timer2.crf --depend .\timer2.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+F (.\Timer3.c)(0x58B599AD)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\timer3.o --omf_browse .\timer3.crf --depend .\timer3.d)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+F (.\startup.s)(0x53E91FA2)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123--list .\startup.lst --xref -o .\startup.o --depend .\startup.d)
+F (.\MusicMain.c)(0x58BC6837)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\musicmain.o --omf_browse .\musicmain.crf --depend .\musicmain.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (PLL.h)(0x55462230)
+I (Music.h)(0x58B5A56E)
+I (Switch.h)(0x58B4A59B)
+I (ST7735.h)(0x5899D5EC)
+F (.\ST7735.c)(0x58A25D21)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I.. -I..\..\.. --c99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\st7735.o --omf_browse .\st7735.crf --depend .\st7735.d)
+I (C:\Keil\ARM\ARMCC\include\stdio.h)(0x51C87C24)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C87C24)
+I (ST7735.h)(0x5899D5EC)
+I (../inc/tm4c123gh6pm.h)(0x5388B4CA)
