@@ -96,6 +96,7 @@ Port A, SSI0 (PA2, PA3, PA5, PA6, PA7) sends data to Nokia5110 LCD
 #include <string.h>
 #include "ST7735.h"
 #include "ADCSWTrigger.h"
+#include "Timer1.h"
 #define SSID_NAME  "Caroline Phone" /* Access point name to connect to */
 //#define SEC_TYPE   SL_SEC_TYPE_WPA
 #define SEC_TYPE   SL_SEC_TYPE_OPEN
@@ -176,6 +177,7 @@ char Temp[TEMP_STRING_SIZE] = {'T','e','m','p',' ','=',' '};
 
 const int VOLT_STRING_SIZE = 14;
 const int VOLT_START_INDEX = 8;
+uint32_t LostPackets = 0;
 
 
 typedef enum{
@@ -233,40 +235,42 @@ void ConnectWithAccessPoint(void);
 
 char GlobalPayload[141];
 int main(void){
-
 	ST7735_InitR(INITR_REDTAB);
-  
   initClk();        // PLL 50 MHz
   UART_Init();      // Send data to PC, 115200 bps
   LED_Init();       // initialize LaunchPad I/O
+	Timer1_Init();
 	ADC0_InitSWTriggerSeq3_Ch9(); //initialize ADC
-  ConnectWithAccessPoint();
+  ConnectWithAccessPoint();	// connect to hotspot
 
   while(1){
-   // strcpy(HostName,"openweathermap.org");  // used to work 10/2015
-    strcpy(HostName,"api.openweathermap.org"); // works 9/2016
-		CommunicateWithServer("api.openweathermap.org",SendBuff,Recvbuff,REQUEST);
+		// get temperature
 		ST7735_FillScreen(ST7735_BLACK);
 		ST7735_SetCursor(0,0);
+		ST7735_OutString("Weather data: ");
+		CommunicateWithServer("api.openweathermap.org",SendBuff,Recvbuff,REQUEST);
 		ST7735_OutString(ParseBuffer(Recvbuff)); //print out current temperature
 		LED_GreenOff();
 		
+		// send voltage
 		uint32_t payloadMaxSize = strlen(VOLTAGE_REQUEST_END)+strlen(VOLTAGE_REQUEST_BEGIN)+VOLT_STRING_SIZE;
 		char TCPPayload[payloadMaxSize];
 		char Volt[VOLT_STRING_SIZE] = "Voltage~";
-		ReadVoltage(Volt); //fills Volt array
-		//memset(&TCPPayload,0,TCPPAYLOAD_MAX_SIZE);
-		strcpy(TCPPayload, VOLTAGE_REQUEST_BEGIN);
-	//strncpy(GlobalPayload,payload,TCPPAYLOAD_MAX_SIZE);
+		ReadVoltage(Volt); // fills Volt array
+		strcpy(TCPPayload, VOLTAGE_REQUEST_BEGIN);	// create request
 		strcat(TCPPayload, Volt);
 		strcat(TCPPayload, VOLTAGE_REQUEST_END);	
+		ST7735_OutString("Server data: ");
 		CommunicateWithServer("ee445l-chy253amt3639.appspot.com",SendBuff,Recvbuff,TCPPayload);
 		
+		ST7735_OutString("Lost Packets:");	// output number of lost packets
+		ST7735_OutUDec(LostPackets);
     while(Board_Input()==0){}; // wait for touch
     LED_GreenOff();
   }
 }
 
+// connect to wifi hotspot
 void ConnectWithAccessPoint(void){
 	int32_t retVal;  SlSecParams_t secParams; char *pConfig = NULL; 
 	UARTprintf("Weather App\n");
@@ -284,30 +288,45 @@ void ConnectWithAccessPoint(void){
   UARTprintf("Connected\n");
 }
 
+
+
+
+//creates socket, sends request, and receives response
+//increments LostPackets if any
+//outputs elapsed time to LCD
 void CommunicateWithServer(char* hostName, char* sendBuffer, char* recvBuffer, char* request){
-	int32_t retVal; INT32 ASize = 0; SlSockAddrIn_t  Addr;
+	int32_t retVal; INT32 ASize = 0; SlSockAddrIn_t  Addr; int checkSend = 0; int checkRecv = 0;
+	Timer1_StartWatch(); //measure the time it takes to collect weather data/store data on server
   retVal = sl_NetAppDnsGetHostByName(hostName,
-             strlen(hostName),&DestinationIP, SL_AF_INET);
-    if(retVal == 0){
-      Addr.sin_family = SL_AF_INET;
-      Addr.sin_port = sl_Htons(80);
-      Addr.sin_addr.s_addr = sl_Htonl(DestinationIP);// IP to big endian 
-      ASize = sizeof(SlSockAddrIn_t);
-      SockID = sl_Socket(SL_AF_INET,SL_SOCK_STREAM, 0);
-      if( SockID >= 0 ){
-        retVal = sl_Connect(SockID, ( SlSockAddr_t *)&Addr, ASize);
-      }
-      if((SockID >= 0)&&(retVal >= 0)){
-        strcpy(sendBuffer,request); 
-        sl_Send(SockID, sendBuffer, strlen(sendBuffer), 0);// Send the HTTP GET 
-        sl_Recv(SockID, recvBuffer, MAX_RECV_BUFF_SIZE, 0);// Receive response 
-        sl_Close(SockID);
-        LED_GreenOn();
-        UARTprintf("\r\n\r\n");
-        UARTprintf(recvBuffer);  UARTprintf("\r\n");
-      }
+             strlen(hostName),&DestinationIP, SL_AF_INET);	// find the IP address
+	if(retVal == 0){
+		Addr.sin_family = SL_AF_INET;
+		Addr.sin_port = sl_Htons(80);
+		Addr.sin_addr.s_addr = sl_Htonl(DestinationIP);// IP to big endian 
+		ASize = sizeof(SlSockAddrIn_t);
+		SockID = sl_Socket(SL_AF_INET,SL_SOCK_STREAM, 0);	// create a socket
+		if( SockID >= 0 ){
+			retVal = sl_Connect(SockID, ( SlSockAddr_t *)&Addr, ASize);	// open the socket
 		}
+		if((SockID >= 0)&&(retVal >= 0)){
+			strcpy(sendBuffer,request); 
+			checkSend = sl_Send(SockID, sendBuffer, strlen(sendBuffer), 0);// Send the HTTP GET TCP packet to server
+			checkRecv = sl_Recv(SockID, recvBuffer, MAX_RECV_BUFF_SIZE, 0);// Receive response 
+			sl_Close(SockID);	// close socket
+			LED_GreenOn();	// debugging LED
+			UARTprintf("\r\n\r\n");
+			UARTprintf(recvBuffer);  UARTprintf("\r\n");
+		}
+	}
+	uint32_t elapsedTime = Timer1_StopWatch();
+	//ST7735_OutChar('\r');
+	ST7735_OutUDec(elapsedTime/50000); // output time in ms
+	ST7735_OutString("ms\r");
+	if(checkSend < 0|| checkRecv < 0)
+		LostPackets += 1;	// record lost packets
 }
+
+
 
 /*!
     \brief This function puts the device in its default state. It:
@@ -608,13 +627,13 @@ int CompareString(char* str1, char* str2, uint32_t size){
 	return 1;
 }
 			
-
+// look for the temperature value from server response
 char* ParseBuffer(char* recvbuff){
 	uint32_t j = 0;
 	uint32_t k = TEMP_START_INDEX;
 	for(uint32_t i = 0; i < MAX_RECV_BUFF_SIZE; ++i){
 		if(recvbuff[i] == 't'){
-			int result = CompareString(&recvbuff[i+1],"emp\":",5);
+			int result = CompareString(&recvbuff[i+1],"emp\":",5);	// check if you've found temp
 			if(result){
 				j=i+6;	//start of actual temperature
 				while(recvbuff[j] != ','){	//fill in all digits of temperature
@@ -633,8 +652,8 @@ char* ParseBuffer(char* recvbuff){
 
 //reads ADC, converts to Volts in range 0-3.300V, displays to LCD
 void ReadVoltage(char* voltStr){
-	uint32_t i = VOLT_START_INDEX;
-	uint32_t ADCVal = ADC0_InSeq3();
+	uint32_t i = VOLT_START_INDEX;	
+	uint32_t ADCVal = ADC0_InSeq3();	// sample ADC
 	uint32_t voltage = (ADCVal * 3300 + 2048)/4096;  //converts value to fixed point resolution .001
 	voltStr[i] = (char)(voltage/1000 + '0');	//fill voltStr with measured voltage values
 	voltStr[i+1] = '.';
@@ -644,6 +663,7 @@ void ReadVoltage(char* voltStr){
 	voltStr[i+5] = 'V';
 	ST7735_OutChar('\r');
 	ST7735_OutString(voltStr);
+	ST7735_OutChar('\r');
 }
 	
 	

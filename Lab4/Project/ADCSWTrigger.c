@@ -1,3 +1,14 @@
+// ******** ADCSWTrigger.c ************** 
+// Ali Tejani and Caroline Yao
+// amt3639 and chy253
+// Creation Date: 2/24/2017
+// Used for ADC sampling
+// Runs on TM4C123
+// Lab section: Tue/Thur 12:30 - 2 PM
+// TA: Lavanya
+// Last Revision: 2/24/2017
+// Modified Daniel Valvano's original file
+
 // ADCSWTrigger.c
 // Runs on TM4C123
 // Provide functions that initialize ADC0 SS3 to be triggered by

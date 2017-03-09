@@ -20,6 +20,7 @@
 ".\rvmdk\ustdlib.o"
 ".\rvmdk\adcswtrigger.o"
 ".\rvmdk\st7735.o"
+".\rvmdk\timer1.o"
 "..\driverlib\rvmdk\driverlib.lib"
 --library_type=microlib --strict --scatter "cc31000_starter.sct"
 
