@@ -4,17 +4,35 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 C:\Users\Caroline\SkyDrive\EE 445L\EE445L\Lab4\Project\getWeather.uvproj
-Project File Date:  02/16/2017
+Project File Date:  02/23/2017
 
 <h2>Output:</h2>
 Build target 'getWeather'
 compiling main.c...
+compiling ADCSWTrigger.c...
+compiling Timer1.c...
 linking...
-Program Size: Code=16212 RO-data=3936 RW-data=124 ZI-data=19508  
+Program Size: Code=16596 RO-data=3936 RW-data=132 ZI-data=19524  
 After Build - User command #1: fromelf --bin --output .\rvmdk\cc31000_starter.bin .\rvmdk\cc31000_starter.axf
 ".\rvmdk\getWeather.axf" - 0 Error(s), 0 Warning(s).
-Load "C:\\Users\\Caroline\\SkyDrive\\EE 445L\\EE445L\\Lab4\\Project\\rvmdk\\getWeather.axf" 
+</pre>
+</body>
+</html>
+tWeather.axf" 
 Connecting: Mode=JTAG, Speed=1000000Hz
 Erase Done.
 Programming Done.
 Verify OK.
+
+g ADCSWTrigger.c...
+compiling ST7735.c...
+compiling Timer1.c...
+Timer1.c(61): warning:  #1-D: last line of file ends without a newline
+  }
+Timer1.c: 1 warning, 0 errors
+linking...
+Program Size: Code=16592 RO-data=3936 RW-data=132 ZI-data=19524  
+After Build - User command #1: fromelf --bin --output .\rvmdk\cc31000_starter.bin .\rvmdk\cc31000_starter.axf
+".\rvmdk\getWeather.axf" - 0 Error(s), 1 Warning(s).
+r.axf" - 1 Error(s), 2 Warning(s).
+Target not created

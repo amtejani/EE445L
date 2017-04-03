@@ -40,3 +40,4 @@
 .\rvmdk\main.o: LED.h
 .\rvmdk\main.o: ST7735.h
 .\rvmdk\main.o: ADCSWTrigger.h
+.\rvmdk\main.o: Timer1.h

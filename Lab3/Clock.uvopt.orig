@@ -193,15 +193,14 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
 <<<<<<< HEAD
-      <TopLine>1</TopLine>
-      <CurrentLine>1</CurrentLine>
+      <ColumnNumber>12</ColumnNumber>
 =======
-      <TopLine>106</TopLine>
-      <CurrentLine>118</CurrentLine>
->>>>>>> 1e45a0e9a9e0131bda8d7e2d4880a1b9f1189df3
+      <ColumnNumber>0</ColumnNumber>
+>>>>>>> 14f6f12cc4c20796bf1b93a21c25250bb9523733
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>85</TopLine>
+      <CurrentLine>122</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ADCSWTrigger.c</PathWithFileName>
       <FilenameWithoutPath>ADCSWTrigger.c</FilenameWithoutPath>
@@ -214,15 +213,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>30</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-<<<<<<< HEAD
-      <TopLine>253</TopLine>
-      <CurrentLine>683</CurrentLine>
-=======
-      <TopLine>191</TopLine>
-      <CurrentLine>607</CurrentLine>
->>>>>>> 1e45a0e9a9e0131bda8d7e2d4880a1b9f1189df3
+      <TopLine>257</TopLine>
+      <CurrentLine>669</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\ClockMain.c</PathWithFileName>
       <FilenameWithoutPath>ClockMain.c</FilenameWithoutPath>
@@ -253,8 +247,8 @@
       <Focus>0</Focus>
       <ColumnNumber>14</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>36</TopLine>
-      <CurrentLine>63</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\SpeakerDriver.c</PathWithFileName>
       <FilenameWithoutPath>SpeakerDriver.c</FilenameWithoutPath>
@@ -269,13 +263,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-<<<<<<< HEAD
-      <TopLine>1622</TopLine>
-      <CurrentLine>1626</CurrentLine>
-=======
-      <TopLine>1022</TopLine>
+      <TopLine>1020</TopLine>
       <CurrentLine>1032</CurrentLine>
->>>>>>> 1e45a0e9a9e0131bda8d7e2d4880a1b9f1189df3
       <bDave2>0</bDave2>
       <PathWithFileName>.\ST7735.c</PathWithFileName>
       <FilenameWithoutPath>ST7735.c</FilenameWithoutPath>
@@ -304,15 +293,14 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>28</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
 <<<<<<< HEAD
-      <TopLine>73</TopLine>
-      <CurrentLine>83</CurrentLine>
+      <ColumnNumber>30</ColumnNumber>
 =======
-      <TopLine>22</TopLine>
-      <CurrentLine>34</CurrentLine>
->>>>>>> 1e45a0e9a9e0131bda8d7e2d4880a1b9f1189df3
+      <ColumnNumber>28</ColumnNumber>
+>>>>>>> 14f6f12cc4c20796bf1b93a21c25250bb9523733
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>49</TopLine>
+      <CurrentLine>65</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\SysTickDriver.c</PathWithFileName>
       <FilenameWithoutPath>SysTickDriver.c</FilenameWithoutPath>
@@ -327,7 +315,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>272</TopLine>
+      <TopLine>273</TopLine>
       <CurrentLine>277</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\startup.s</PathWithFileName>
