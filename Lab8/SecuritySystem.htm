@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\SecuritySystem.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\SecuritySystem.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Mon Apr 03 18:48:30 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5.03 [Build 76]: Last Updated: Tue Apr 04 13:04:26 2017
 <BR><P>
 <H3>Maximum Stack Usage =        152 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -129,7 +129,7 @@ Function Pointers
  <LI><a href="#[1e]">Timer0B_Handler</a> from startup.o(RESET) referenced from startup.o(RESET)
  <LI><a href="#[1f]">Timer1A_Handler</a> from switch.o(i.Timer1A_Handler) referenced from startup.o(RESET)
  <LI><a href="#[20]">Timer1B_Handler</a> from startup.o(RESET) referenced from startup.o(RESET)
- <LI><a href="#[21]">Timer2A_Handler</a> from startup.o(RESET) referenced from startup.o(RESET)
+ <LI><a href="#[21]">Timer2A_Handler</a> from speaker.o(i.Timer2A_Handler) referenced from startup.o(RESET)
  <LI><a href="#[22]">Timer2B_Handler</a> from startup.o(RESET) referenced from startup.o(RESET)
  <LI><a href="#[2d]">Timer3A_Handler</a> from startup.o(RESET) referenced from startup.o(RESET)
  <LI><a href="#[2e]">Timer3B_Handler</a> from startup.o(RESET) referenced from startup.o(RESET)
@@ -470,9 +470,6 @@ Global Symbols
 <P><STRONG><a name="[20]"></a>Timer1B_Handler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup.o(RESET))
 <BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
 </UL>
-<P><STRONG><a name="[21]"></a>Timer2A_Handler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup.o(RESET))
-<BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
-</UL>
 <P><STRONG><a name="[22]"></a>Timer2B_Handler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup.o(RESET))
 <BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
 </UL>
@@ -776,6 +773,9 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
 </UL>
+<P><STRONG><a name="[21]"></a>Timer2A_Handler</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, speaker.o(i.Timer2A_Handler))
+<BR>[Address Reference Count : 1]<UL><LI> startup.o(RESET)
+</UL>
 <P><STRONG><a name="[a9]"></a>__scatterload_copy</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_copy), UNUSED)
 
 <P><STRONG><a name="[aa]"></a>__scatterload_null</STRONG> (Thumb, 2 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_null), UNUSED)
@@ -792,7 +792,7 @@ Global Symbols
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ST7735_OutUDec
 </UL>
 
-<P><STRONG><a name="[7c]"></a>main</STRONG> (Thumb, 70 bytes, Stack size 0 bytes, testmain.o(i.main))
+<P><STRONG><a name="[7c]"></a>main</STRONG> (Thumb, 76 bytes, Stack size 0 bytes, testmain.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = main &rArr; ST7735_OutUDec &rArr; ST7735_DrawString &rArr; ST7735_DrawCharS &rArr; ST7735_FillRect &rArr; setAddrWindow
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PLL_Init

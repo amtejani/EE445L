@@ -42,11 +42,13 @@ int main(void) {
 	ST7735_InitR(INITR_REDTAB);
 	Switch_Init(Button1Press,Button2Press,MagnetPress);
 	Keypad_Init(KeypadPress);
+	//Speaker_Init();
 	while(1){
 		DelayWait10ms(100);
 		ST7735_SetCursor(0,0);
 		ST7735_FillScreen(ST7735_BLACK);
 		ST7735_OutUDec(LastKey);
+		ST7735_OutChar('\r');
 		ST7735_OutChar(Switch);
 	}
 	

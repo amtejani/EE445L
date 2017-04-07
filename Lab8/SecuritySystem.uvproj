@@ -168,10 +168,10 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>4097</DriverSelection>
           </Flash1>
           <bUseTDR>0</bUseTDR>
-          <Flash2>BIN\UL2CM3.DLL</Flash2>
+          <Flash2>BIN\lmidk-agdi.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -411,11 +411,6 @@
               <FilePath>.\startup.s</FilePath>
             </File>
             <File>
-              <FileName>esp8266.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\esp8266.c</FilePath>
-            </File>
-            <File>
               <FileName>ST7735.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\ST7735.c</FilePath>
@@ -436,9 +431,19 @@
               <FilePath>.\solenoid.c</FilePath>
             </File>
             <File>
-              <FileName>UART.c</FileName>
+              <FileName>testmain.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\UART.c</FilePath>
+              <FilePath>.\testmain.c</FilePath>
+            </File>
+            <File>
+              <FileName>PLL.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\PLL.c</FilePath>
+            </File>
+            <File>
+              <FileName>speaker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\speaker.c</FilePath>
             </File>
           </Files>
         </Group>
