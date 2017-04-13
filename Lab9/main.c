@@ -40,6 +40,7 @@ Completed when
 #include "ADCSWTrigger.h"
 #include "uart.h"
 #include "PLL.h"
+#include "ST7735.h"
 
 uint16_t const ADCdata[53]={0,104,134,165,196,228,261,294,328,362,397,
      433,470,507,545,584,624,665,706,748,791,
@@ -93,30 +94,104 @@ void Timer0A_Handler(void){
 }
 
 uint32_t convert(uint32_t adcValue) {
-	int j = 0;
-	while(j < 100-1 && adcValue >= ADCdata[j+1]) {
-		j++;
+//	int j = 0;
+//	while(j < 100-1 && adcValue >= ADCdata[j+1]) {
+//		j++;
+//	}
+//	uint32_t temp = (adcValue - ADCdata[j])*((Tdata[j+1]-Tdata[j])/(ADCdata[j+1]-ADCdata[j])) + Tdata[j];
+//	return temp;
+	uint32_t temp = 0;
+	for(int i = 0; i < 53; i++){
+		if (adcValue == ADCdata[i]) {
+						temp = Tdata[i];
+						break;
+					} else if (adcValue > ADCdata[i]) {
+						continue;
+					} else {
+						uint32_t upperX = ADCdata[i];
+						uint32_t lowerX = ADCdata[i-1];
+						uint32_t upperY = Tdata[i];
+						uint32_t lowerY = Tdata[i-1];
+						int32_t xDiff = upperX - lowerX;
+						int32_t yDiff = upperY - lowerY;
+						int32_t slope = (yDiff) / (xDiff);
+						temp = ((adcValue - lowerX) * slope) + lowerY;
+						break;
+					}
 	}
-	uint32_t temp = (adcValue - ADCdata[j])*(Tdata[j+1]-Tdata[j])/(ADCdata[j+1]-ADCdata[j]) + Tdata[j];
 	return temp;
 }
 
-int main(void){ int32_t data;
+const int32_t MAX_DECIMAL = 4001;
+const int32_t MIN_DECIMAL = 999;
+
+/****************ST7735_sDecOut3***************
+ converts fixed point number to LCD
+ format signed 32-bit with resolution 0.001
+ range -9.999 to +9.999
+ Inputs:  signed 32-bit integer part of fixed-point number
+ Outputs: none
+ send exactly 6 characters to the LCD 
+ */
+void ST7735_sDecOut2(int32_t n) {
+	if(n < MAX_DECIMAL && n > MIN_DECIMAL) { // if valid n
+		char output[] = "   .  ";
+		// if negative, add sign and change to positive
+		if(n < 0) { 
+			output[0] = '-';
+			n *= -1;
+		}
+		// create output
+		for(uint32_t i = 5; i > 1; i--) {
+			if(i==3) i--;
+			uint32_t nextDigit = n % 10;
+			n = n / 10;
+			output[i] = ('0' + nextDigit);	
+		}
+		output[1] = ('0' + n);
+		// display
+		ST7735_OutString(output);
+	} else { 
+		// print error if not valid n
+		ST7735_OutString(" **.**");
+	}
+}
+
+int main(void){
+	ST7735_InitR(INITR_REDTAB);
+	ST7735_FillScreen(ST7735_BLACK);
+	ST7735_SetCursor(0,0); ST7735_OutString("Lab 9: Thermistor");
+  ST7735_PlotClear(1000,4000);  // range from 0 to 4095
+  ST7735_SetCursor(0,1); ST7735_OutString("N=");
+  ST7735_SetCursor(0,2); ST7735_OutString("T=");
+                        
   PLL_Init(Bus80MHz);   // 80 MHz
   UART_Init();              // initialize UART device
-  Timer0A_Init(80000);  // initialize timer0A (1000 Hz)
+  //Timer0A_Init(80000);  // initialize timer0A (1000 Hz)
+	Timer0A_Init(1600000); //50hz
   ADC0_InitSWTriggerSeq3_Ch9();
+	
   while(Count < 100){
 		WaitForInterrupt();
-    UART_OutString("\n\rADC data =");
-    UART_OutUDec(data);
+    //UART_OutString("\n\rADC data =");
+    //UART_OutUDec(data);
+		uint32_t temperature = convert(Values[Count]);
+		ST7735_PlotPoint(temperature);  // Measured temperature
+		ST7735_PlotNext();
+    ST7735_SetCursor(3,1); ST7735_OutUDec(Values[Count]);            // 0 to 4095
+    ST7735_SetCursor(2,2); ST7735_sDecOut2(temperature); ST7735_OutString(" C");// 0.01 C 
+		Count++;
   }
 	for(int i = 0; i < 100; i++) {
     UART_OutString("\n\rADC data[");
     UART_OutUDec(i);
-		UART_OutString("] =");
-    UART_OutUDec(convert(Values[i]));
+		UART_OutString("] = ");
+    //UART_OutUDec(convert(Values[i]));
+		UART_OutUDec(Values[i]);
+
 	}
+	
+
 }
 
 

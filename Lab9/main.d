@@ -4,3 +4,4 @@
 .\main.o: ADCSWTrigger.h
 .\main.o: uart.h
 .\main.o: PLL.h
+.\main.o: ST7735.h
