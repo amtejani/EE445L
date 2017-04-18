@@ -22,6 +22,8 @@
  http://users.ece.utexas.edu/~valvano/
  */
  
+extern int32_t Done;
+ 
 // Initialize input capture
 void PeriodMeasure_Init(void);
  
@@ -29,4 +31,4 @@ void PeriodMeasure_Init(void);
 void Timer0A_Handler(void);
 
 // Get tachometer frequency in 0.1 fixed point
-uint32_t GetTachFrequency(void);
+uint32_t GetPeriod(void);

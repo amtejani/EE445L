@@ -1306,7 +1306,7 @@ void ST7735_PlotClear(int32_t ymin, int32_t ymax){
 // It does output to display
 // Inputs: y is the y coordinate of the point plotted
 // Outputs: none
-void ST7735_PlotPoint(int32_t y){int32_t j;
+void ST7735_PlotPoint(int32_t y, uint16_t color){int32_t j;
   if(y<Ymin) y=Ymin;
   if(y>Ymax) y=Ymax;
   // X goes from 0 to 127
@@ -1316,10 +1316,10 @@ void ST7735_PlotPoint(int32_t y){int32_t j;
   j = 32+(127*(Ymax-y))/Yrange;
   if(j<32) j = 32;
   if(j>159) j = 159;
-  ST7735_DrawPixel(X,   j,   ST7735_BLUE);
-  ST7735_DrawPixel(X+1, j,   ST7735_BLUE);
-  ST7735_DrawPixel(X,   j+1, ST7735_BLUE);
-  ST7735_DrawPixel(X+1, j+1, ST7735_BLUE);
+  ST7735_DrawPixel(X,   j,   color);
+  ST7735_DrawPixel(X+1, j,   color);
+  ST7735_DrawPixel(X,   j+1, color);
+  ST7735_DrawPixel(X+1, j+1, color);
 }
 // *************** ST7735_PlotLine ********************
 // Used in the voltage versus time plot, plot line to new point

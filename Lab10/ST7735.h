@@ -317,7 +317,7 @@ void ST7735_PlotClear(int32_t ymin, int32_t ymax);
 // It does output to display
 // Inputs: y is the y coordinate of the point plotted
 // Outputs: none
-void ST7735_PlotPoint(int32_t y);
+void ST7735_PlotPoint(int32_t y, uint16_t);
 
 // *************** ST7735_PlotLine ********************
 // Used in the voltage versus time plot, plot line to new point

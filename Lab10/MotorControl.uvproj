@@ -440,6 +440,11 @@
               <FileType>1</FileType>
               <FilePath>.\MotorControl.c</FilePath>
             </File>
+            <File>
+              <FileName>motorcontroller.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\motorcontroller.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

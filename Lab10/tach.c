@@ -25,7 +25,6 @@
 // external signal connected to PB6 (T0CCP0) (trigger on rising edge)
 #include <stdint.h>
 #include "../inc/tm4c123gh6pm.h"
-#include "PLL.h"
 
 #define NVIC_EN0_INT19          0x00080000  // Interrupt 19 enable
 #define PF2                     (*((volatile uint32_t *)0x40025010))
@@ -50,7 +49,7 @@ void WaitForInterrupt(void);  // low power mode
 
 uint32_t Period;              // (1/clock) units
 uint32_t First;               // Timer0A first edge
-int32_t Done;                 // set each rising
+volatile int32_t Done;                 // set each rising
 // max period is (2^24-1)*12.5ns = 209.7151ms
 // min period determined by time to run ISR, which is about 1us
 void PeriodMeasure_Init(void){
@@ -96,6 +95,6 @@ void Timer0A_Handler(void){
   PF2 = PF2^0x04;  // toggle PF2
 }
 
-uint32_t GetTachFrequency(void) {
-	return 8000000/Period;
+uint32_t GetPeriod(void) {
+	return Period;
 }

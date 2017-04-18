@@ -70,6 +70,6 @@ void PWM0B_Duty(uint16_t duty){
 
 // turn off motor
 void Motor_ShutDown(void) {
-  PWM0_0_CTL_R = 0;
+  PWM0_ENABLE_R &= ~0x02;
 }
 

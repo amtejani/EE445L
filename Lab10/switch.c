@@ -1,4 +1,4 @@
-// ******** switch.h ************** 
+// ******** switch.c ************** 
 // Ali Tejani and Caroline Yao
 // amt3639 and chy253
 // Creation Date: 2/20/2017
@@ -84,7 +84,7 @@ void Switch_Init(void(*button1Task)(void), void(*button2Task)(void)){
   GPIO_PORTF_IBE_R |= 0x11;     //     PF4 is both edges
   GPIOArm();
 
-  SYSCTL_RCGCTIMER_R |= 0x01;   // 0) activate TIMER0
+  SYSCTL_RCGCTIMER_R |= 0x02;   // 0) activate TIMER0
 	Button1Task = button1Task;		// user defined methods
 	Button2Task = button2Task;
   Last = (PF4 | PF0);     // initial switch state
