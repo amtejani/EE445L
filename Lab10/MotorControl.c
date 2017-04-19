@@ -28,7 +28,7 @@ void Display() {
 	ST7735_PlotPoint(DesiredSpeed, ST7735_RED);  // Measured temperature
 	ST7735_PlotNextErase();
 	ST7735_SetCursor(0,1); ST7735_OutString("RPS M=         ");
-	ST7735_SetCursor(0,2); ST7735_OutString("PRS A=         ");
+	ST7735_SetCursor(0,2); ST7735_OutString("RPS A=         ");
 	uint32_t speed = Speed; uint32_t desiredSpeed = DesiredSpeed;
 	ST7735_SetCursor(7,1); ST7735_OutUDec(speed/10); ST7735_OutChar('.'); ST7735_OutUDec(speed%10);
 	ST7735_SetCursor(7,2); ST7735_OutUDec(desiredSpeed/10); ST7735_OutChar('.'); ST7735_OutUDec(desiredSpeed%10);
@@ -41,7 +41,7 @@ int main(void) {
 	
 	ST7735_FillScreen(ST7735_BLACK);
 	ST7735_SetCursor(0,0); ST7735_OutString("Lab 10: Motor");
-  ST7735_PlotClear(0,400);  // range from 0 to 4095
+  ST7735_PlotClear(0,MAX_RPS);  // range from 0 to 4095
 	while(1){
 		//WaitForInterrupt();
 		Display();

@@ -25,6 +25,9 @@ int32_t E; // speed error in 0.1 rps
 int32_t U; // duty cycle 40 to 39960
 uint32_t Count;
 
+const int32_t MAX_RPS = 500;
+const int32_t MIN_RPS = 150;
+
 
 // starts timer 2 and interrupts
 // sets timer to play A note
@@ -54,15 +57,15 @@ void MotorConrollerInit(void) {
 	Timer2_Arm();
 	PWM0B_Init(40000,30000);
 	PeriodMeasure_Init();
-	DesiredSpeed = 250;
+	DesiredSpeed = MIN_RPS;
 	U = 30000;
 	Count = 0;
 }
 
 void Timer2A_Handler(void){
 	TIMER2_ICR_R = 0x01; // acknowledge timer2A timeout
-	uint32_t Period = GetPeriod();
 	if (Count < 5 && Done) {
+		uint32_t Period = GetPeriod();
 		Speed = 200000000/Period; // 0.1 rps
 		E = DesiredSpeed-Speed; // 0.1 rps
 		U = U+(10*E)/64; // discrete integral
@@ -87,10 +90,11 @@ void Timer2A_Handler(void){
 // increase output by 5rps
 void IncrementDutyCycle() {
 	DesiredSpeed += 50;
-	if(DesiredSpeed > 400) DesiredSpeed = 400;
+	if(DesiredSpeed > MAX_RPS) DesiredSpeed = MAX_RPS;
+	else if(DesiredSpeed < MIN_RPS) DesiredSpeed = MIN_RPS;
 }
 // increase output by 5rps
 void DecrementDutyCycle() {
 	DesiredSpeed -= 50;
-	if(DesiredSpeed < 0) DesiredSpeed = 0;
+	if(DesiredSpeed < MIN_RPS) DesiredSpeed = 0;
 }

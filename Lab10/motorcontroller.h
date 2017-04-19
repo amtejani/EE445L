@@ -9,6 +9,8 @@
 
 extern int32_t Speed;
 extern int32_t DesiredSpeed;
+extern int32_t MAX_RPS;
+extern int32_t MIN_RPS;
 
 
 // Initialize motor, tachometer, and controller
