@@ -19,5 +19,10 @@ void Speaker_Init(void);
 // toggles value at PE5, creating square wave
 void Timer2A_Handler(void);
 
+// Disable Speaker
+void SpeakerEnable(void);
+// Enable Speaker
+void SpeakerDisable(void);
+
 
 #endif // __SPEAKERDRIVER_H__

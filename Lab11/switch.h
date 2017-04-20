@@ -23,3 +23,5 @@ void GPIOPortF_Handler(void);
 // Set last operation
 void Timer1A_Handler(void);
 
+// Returns status of magnet, open or closed
+uint32_t GetDoorStatus(void);

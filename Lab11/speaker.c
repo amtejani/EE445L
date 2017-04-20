@@ -56,10 +56,6 @@ void Speaker_Init(void) {
 	GPIO_PORTF_AFSEL_R &= ~0x01;             // Disable Alternate Function on PE5
 	GPIO_PORTF_DEN_R   |= 0x01;              // Enable digital I/O for PE5
 	GPIO_PORTF_AMSEL_R &= ~0x01;             // Disable analog functionality
-	GPIO_PORTF_DIR_R   |= 0x02;              // Make PE5 in
-	GPIO_PORTF_AFSEL_R &= ~0x02;             // Disable Alternate Function on PE5
-	GPIO_PORTF_DEN_R   |= 0x02;              // Enable digital I/O for PE5
-	GPIO_PORTF_AMSEL_R &= ~0x02;             // Disable analog functionality
 	Timer2_Arm();
 }
 
@@ -67,6 +63,13 @@ void Speaker_Init(void) {
 // toggles value at PE5, creating square wave
 void Timer2A_Handler(void) {
 	TIMER2_ICR_R = 0x01; // acknowledge timer2a timeout
-	PF1 ^= 0x02;
-	//PF0 ^= 0x01;
+	PF0 ^= 0x01;
+}
+
+void SpeakerEnable(void) {
+	TIMER2_CTL_R |= TIMER_CTL_TAEN;
+}
+
+void SpeakerDisable(void) {
+	TIMER2_CTL_R &= ~TIMER_CTL_TAEN;
 }

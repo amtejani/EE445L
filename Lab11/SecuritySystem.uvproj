@@ -431,11 +431,6 @@
               <FilePath>.\solenoid.c</FilePath>
             </File>
             <File>
-              <FileName>testmain.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\testmain.c</FilePath>
-            </File>
-            <File>
               <FileName>PLL.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\PLL.c</FilePath>
@@ -444,6 +439,11 @@
               <FileName>speaker.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\speaker.c</FilePath>
+            </File>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\system.c</FilePath>
             </File>
           </Files>
         </Group>

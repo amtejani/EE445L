@@ -39,6 +39,7 @@ void EndCritical(long sr);    // restore I bit to previous value
 void WaitForInterrupt(void);  // low power mode
 
 volatile static unsigned long Last;      // previous
+volatile static unsigned long Magnet;      // previous
 void (*Button1Task)(void);    // user function to be executed on button 1 touch
 void (*Button2Task)(void);    // user function to be executed on button 2 touch
 void (*MagnetTask)(void);    // user function to be executed on button 3 touch
@@ -91,6 +92,7 @@ void Switch_Init(void(*button1Task)(void), void(*button2Task)(void),
 	Button2Task = button2Task;
 	MagnetTask = magnetTask;
   Last = (PF4 | PF3 | PF1);     // initial switch state
+	Magnet = PF1 >> 2;
  }
 // Interrupt on rising or falling edge of PF4 (CCP0)
 void GPIOPortF_Handler(void){
@@ -109,6 +111,11 @@ void GPIOPortF_Handler(void){
 void Timer1A_Handler(void){
   TIMER1_IMR_R = 0x00000000;    // disarm timeout interrupt
   Last = (PF4 | PF3 | PF1);  // switch state
+	Magnet = PF1 >> 2;
   GPIOArm();   // start GPIO
+}
+
+uint32_t GetDoorStatus(void) {
+	return Magnet;
 }
 

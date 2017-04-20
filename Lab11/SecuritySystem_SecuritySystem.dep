@@ -5,9 +5,9 @@ I (C:\Keil\ARM\ARMCC\include\stdio.h)(0x51C88A34)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
 I (ST7735.h)(0x5899E3FC)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-F (.\switch.c)(0x58E2D517)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\switch.o --omf_browse .\switch.crf --depend .\switch.d)
+F (.\switch.c)(0x58F7EB69)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\switch.o --omf_browse .\switch.crf --depend .\switch.d)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
-I (switch.h)(0x58E2C247)
+I (switch.h)(0x58F7EB8A)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 F (.\keypad.c)(0x58E2DF01)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\keypad.o --omf_browse .\keypad.crf --depend .\keypad.d)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
@@ -17,19 +17,20 @@ F (.\solenoid.c)(0x58E25E30)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --a
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
 I (solenoid.h)(0x58DC9412)
-F (.\testmain.c)(0x58E3E00C)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\testmain.o --omf_browse .\testmain.crf --depend .\testmain.d)
-I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
-I (PLL.h)(0x55463040)
-I (switch.h)(0x58E2C247)
-I (keypad.h)(0x58E2C06E)
-I (speaker.h)(0x58DC0FAE)
-I (solenoid.h)(0x58DC9412)
-I (ST7735.h)(0x5899E3FC)
 F (.\PLL.c)(0x5545A0E2)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\pll.o --omf_browse .\pll.crf --depend .\pll.d)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
 I (PLL.h)(0x55463040)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-F (.\speaker.c)(0x58E2F2CA)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\speaker.o --omf_browse .\speaker.crf --depend .\speaker.d)
+F (.\speaker.c)(0x58F80CDE)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\speaker.o --omf_browse .\speaker.crf --depend .\speaker.d)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
-I (speaker.h)(0x58DC0FAE)
+I (speaker.h)(0x58F80EFC)
+F (.\system.c)(0x58F80FAB)(-c --cpu Cortex-M4 -D__EVAL -D__MICROLIB -g -O0 --apcs=interwork --split_sections --signed_chars -I.. -I..\..\.. --C99-I C:\Keil\ARM\RV31\INC-I C:\Keil\ARM\CMSIS\Include-I C:\Keil\ARM\Inc\TI\TM4C123-Drvmdk -DPART_LM4F120H5QR -DTM4C1231C3PM-o .\system.o --omf_browse .\system.crf --depend .\system.d)
+I (C:\Keil\ARM\ARMCC\include\stdint.h)(0x51C88A34)
+I (C:\Keil\ARM\ARMCC\include\string.h)(0x51C88A34)
+I (PLL.h)(0x55463040)
+I (switch.h)(0x58F7EB8A)
+I (keypad.h)(0x58E2C06E)
+I (speaker.h)(0x58F80EFC)
+I (solenoid.h)(0x58DC9412)
+I (ST7735.h)(0x5899E3FC)
