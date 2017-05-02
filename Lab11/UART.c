@@ -341,12 +341,12 @@ char character;
   *bufPt = 0;
 }
 
-
+/*
 // this is used for printf to output to the usb uart
 int fputc(int ch, FILE *f){
   UART_OutChar(ch);
   return 1;
-}
+}*/
 
 #ifdef __TI_COMPILER_VERSION__
   //Code Composer Studio Code
@@ -387,7 +387,7 @@ int uart_rename(const char *old_name, const char *new_name){
 // 8 bit word length, no parity bits, one stop bit
 // Input: none
 // Output: none
-void Output_Init(void){int ret_val; FILE *fptr;
+void Output_Init2(void){int ret_val; FILE *fptr;
   UART_Init();
   ret_val = add_device("uart", _SSA, uart_open, uart_close, uart_read, uart_write, uart_lseek, uart_unlink, uart_rename);
   if(ret_val) return; // error
@@ -404,7 +404,7 @@ void Output_Init(void){int ret_val; FILE *fptr;
 // 8 bit word length, no parity bits, one stop bit, FIFOs enabled
 // Input: none
 // Output: none
-void Output_Init(void){
+void Output_Init2(void){
   UART_Init();
 }
 #endif

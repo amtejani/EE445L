@@ -128,6 +128,6 @@ void UART_InString(char *bufPt, uint16_t max);
 // 8 bit word length, no parity bits, one stop bit, FIFOs enabled
 // Input: none
 // Output: none
-void Output_Init(void);
+void Output_Init2(void);
 
 #endif

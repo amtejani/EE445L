@@ -111,7 +111,7 @@ void GPIOPortF_Handler(void){
 void Timer1A_Handler(void){
   TIMER1_IMR_R = 0x00000000;    // disarm timeout interrupt
   Last = (PF4 | PF3 | PF1);  // switch state
-	Magnet = PF1 >> 2;
+	Magnet = PF1 >> 1;
   GPIOArm();   // start GPIO
 }
 

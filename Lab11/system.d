@@ -2,8 +2,5 @@
 .\system.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
 .\system.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h
 .\system.o: PLL.h
-.\system.o: switch.h
-.\system.o: keypad.h
-.\system.o: speaker.h
-.\system.o: solenoid.h
-.\system.o: ST7735.h
+.\system.o: FSM.h
+.\system.o: ../inc/tm4c123gh6pm.h

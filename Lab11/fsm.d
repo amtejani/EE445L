@@ -1,0 +1,11 @@
+.\fsm.o: FSM.c
+.\fsm.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\fsm.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h
+.\fsm.o: PLL.h
+.\fsm.o: switch.h
+.\fsm.o: keypad.h
+.\fsm.o: speaker.h
+.\fsm.o: solenoid.h
+.\fsm.o: ST7735.h
+.\fsm.o: esp8266.h
+.\fsm.o: ../inc/tm4c123gh6pm.h
