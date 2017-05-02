@@ -354,7 +354,7 @@ void ESP8266_Init(uint32_t baud){
   ServerResponseSearchFinished = 0;
   EnableInterrupts();
 // step 1: AT+RST reset module
-  printf("ESP8266 Initialization:\n\r");
+  //printf("ESP8266 Initialization:\n\r");
   ESP8266_EchoResponse = true; // debugging
   if(ESP8266_Reset()==0){ 
     printf("Reset failure, could not reset\n\r"); while(1){};

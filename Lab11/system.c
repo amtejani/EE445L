@@ -13,14 +13,8 @@
 #include "PLL.h"
 #include "FSM.h"
 #include "esp8266.h"
-#include "../inc/tm4c123gh6pm.h"
-
-#include "switch.h"
-#include "keypad.h"
-#include "speaker.h"
-#include "solenoid.h"
 #include "ST7735.h"
-#include "esp8266.h"
+#include "../inc/tm4c123gh6pm.h"
 
 int main1(void) {
 	PLL_Init(Bus80MHz);				// init modules

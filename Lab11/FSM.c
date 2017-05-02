@@ -57,11 +57,22 @@ uint32_t Enable;
 uint32_t KeycodeTime;
 uint32_t TimeoutTime;
 
+#define TIMEOUT_ERROR "ur too slow scrub"
+#define INVALID_INPUT "Incorrect keycode"
+
 // On Enable button press, turn on system
 static void EnableSystem() {
 	if(State == OFF) {
 		Enable = 1;
 	}
+}
+
+static void ResetState(){
+	ChangeCode = 0;
+	Enable = 0;
+	KeycodeTime = TIMER4_TAR_R;
+	TimeoutTime = TIMER3_TAR_R;
+	KeypadCounter = 0;
 }
 
 // On Change button press, allow ask for passcode and allow user to 
@@ -89,109 +100,108 @@ static void KeypadPress(uint32_t pressed) {
 
 // validate key from server
 static uint32_t ValidateKey() {
-	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-		char* Fetch;
-		strcpy(Fetch,CHECK_CODE);
-		int i;
-		for(i = 0; i < KEYCODE_LENGTH; i++) {
-			Fetch[171 + i] = KeycodeInput[i];
-		}
-    ESP8266_SendTCP(Fetch);
-  }
-  ESP8266_CloseTCPConnection();
+//	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
+//		char* Fetch;
+//		strcpy(Fetch,CHECK_CODE);
+//		int i;
+//		for(i = 0; i < KEYCODE_LENGTH; i++) {
+//			Fetch[171 + i] = KeycodeInput[i];
+//		}
+//    ESP8266_SendTCP(Fetch);
+//  }
+//  ESP8266_CloseTCPConnection();
 	return 0;
 }
 // update key in server
 static uint32_t UpdateKey() {
-	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-		char* Fetch;
-		strcpy(Fetch,SEND_STATUS);
-		int i;
-		for(i = 0; i < KEYCODE_LENGTH; i++) {
-			Fetch[176 + i] = TempKeycode0[i];
-			Fetch[190 + i] = TempKeycode1[i];
-			Fetch[204 + i] = TempKeycode2[i];
-		}
-    ESP8266_SendTCP(Fetch);
-  }
-  ESP8266_CloseTCPConnection();
+//	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
+//		char* Fetch;
+//		strcpy(Fetch,SEND_STATUS);
+//		int i;
+//		for(i = 0; i < KEYCODE_LENGTH; i++) {
+//			Fetch[176 + i] = TempKeycode0[i];
+//			Fetch[190 + i] = TempKeycode1[i];
+//			Fetch[204 + i] = TempKeycode2[i];
+//		}
+//    ESP8266_SendTCP(Fetch);
+//  }
+//  ESP8266_CloseTCPConnection();
 	return 0;
 }
 
 uint32_t UpdateState() {
-	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-		char* Fetch;
-		strcpy(Fetch,SEND_STATUS);
-		Fetch[170] = State + '0';
-		Fetch[177] = DoorStatus + '0';
-    ESP8266_SendTCP(Fetch);
-  }
-  ESP8266_CloseTCPConnection();
+//	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
+//		char* Fetch;
+//		strcpy(Fetch,SEND_STATUS);
+//		Fetch[170] = State + '0';
+//		Fetch[177] = DoorStatus + '0';
+//    ESP8266_SendTCP(Fetch);
+//  }
+//  ESP8266_CloseTCPConnection();
 	return 0;
 }
 
 static uint32_t StateOff() {
 	if(Enable) {
 		State = WAITING;
-		TimeoutTime = TIMER4_TAR_R;
-		KeycodeTime = TIMER3_TAR_R;
 	} else if(ChangeCode) {
 		State = CHANGE_PASS;
-		TimeoutTime = TIMER4_TAR_R;
 	}
-	Enable = 0;
-	ChangeCode = 0;
-	KeypadCounter = 0;
+	ResetState();
 	return 0;
 }
 
 static uint32_t StateWaiting() {
 	if(KeycodeTime - TIMER3_TAR_R < WAITING_TIMEOUT) {
 		if(KeypadCounter == 0) {
-			TimeoutTime = TIMER4_TAR_R;
+			ResetState();
 		} else if(KeypadCounter > 0 && TimeoutTime - TIMER4_TAR_R > KEYCODE_TIMEOUT) {
-			KeypadCounter = 0;
-			TimeoutTime = TIMER4_TAR_R;
+			ResetState();
 			// display timeout message
+			ST7735_SetCursor(0,1);
+			ST7735_OutString(TIMEOUT_ERROR);
 		} else if(KeypadCounter == KEYCODE_LENGTH) {
 			int result = ValidateKey();
-			KeypadCounter = 0;
-			TimeoutTime = TIMER4_TAR_R;
-			if(result) {
+			ResetState();
+			if(!result) {
 				State = OFF;
 				return 0;
 			} else {
 				// display error message
+				ST7735_SetCursor(0,1);
+				ST7735_OutString(INVALID_INPUT);
 			}
 		}
 	} else {
 		State = ON;
-		TimeoutTime = TIMER4_TAR_R;
+		ResetState();
 	}
 	return 0;
 }
 
 static uint32_t StateOn() {
 	if(KeypadCounter == 0) {
-		TimeoutTime = TIMER4_TAR_R;
+		ResetState();
 	} else if(KeypadCounter > 0 && TimeoutTime - TIMER4_TAR_R > KEYCODE_TIMEOUT) {
-		KeypadCounter = 0;
-		TimeoutTime = TIMER4_TAR_R;
+		ResetState();
 		// display timeout message
+		ST7735_SetCursor(0,1);
+		ST7735_OutString(TIMEOUT_ERROR);
 	} else if(KeypadCounter == KEYCODE_LENGTH) {
 		int result = ValidateKey();
-		KeypadCounter = 0;
-		TimeoutTime = TIMER4_TAR_R;
-		if(result) {
+		ResetState();
+		if(!result) {
 			State = OFF;
 			return 0;
 		} else {
 			// display error message
+			ST7735_SetCursor(0,1);
+			ST7735_OutString(INVALID_INPUT);
 		}
-	} else if(GetDoorStatus() == 1) {
+	} 
+	if(GetDoorStatus() == 1) { 
 		State = OPEN;
-		KeypadCounter = 0;
-		TimeoutTime = TIMER4_TAR_R;
+		ResetState();
 	}
 	return 0;
 }
@@ -199,21 +209,23 @@ static uint32_t StateOn() {
 static uint32_t StateOpen() {
 	SpeakerEnable();
 	if(KeypadCounter == 0) {
-		TimeoutTime = TIMER4_TAR_R;
+		ResetState();
 	} else if(KeypadCounter > 0 && TimeoutTime - TIMER4_TAR_R > KEYCODE_TIMEOUT) {
-		KeypadCounter = 0;
-		TimeoutTime = TIMER4_TAR_R;
+		ResetState();
 		// display timeout message
+		ST7735_SetCursor(0,1);
+		ST7735_OutString(TIMEOUT_ERROR);
 	} else if(KeypadCounter == KEYCODE_LENGTH) {
 		int result = ValidateKey();
-		KeypadCounter = 0;
-		TimeoutTime = TIMER4_TAR_R;
-		if(result) {
+		ResetState();
+		if(!result) {
 			State = OFF;
 			SpeakerDisable();
 			return 0;
 		} else {
 			// display error message
+			ST7735_SetCursor(0,1);
+			ST7735_OutString(INVALID_INPUT);			
 		}
 	}
 	return 0;
@@ -224,20 +236,24 @@ static uint32_t StateChange1() {
 		if(KeypadCounter == KEYCODE_LENGTH) {
 			int result = ValidateKey();
 			strcpy(TempKeycode0, KeycodeInput);
-			KeypadCounter = 0;
-			TimeoutTime = TIMER4_TAR_R;
-			if(result) {
+			ResetState();
+			if(!result) {
 				State = NEW_PASS;
 				return 0;
 			} else {
 				// display error message
+				ST7735_SetCursor(0,1);
+				ST7735_OutString(INVALID_INPUT);				
 				State = OFF;
 				return 0;
 			}
 		}
 	} else {
 		// display timeout message
+		ST7735_SetCursor(0,1);
+		ST7735_OutString(TIMEOUT_ERROR);
 		State = OFF;
+		ResetState();
 	}
 	return 0;
 }
@@ -247,13 +263,11 @@ static uint32_t StateChange2() {
 		if(KeypadCounter == KEYCODE_LENGTH) {
 			strcpy(TempKeycode1, KeycodeInput);
 			State = CONFIRM_PASS;
-			KeypadCounter = 0;
-			TimeoutTime = TIMER4_TAR_R;
+			ResetState();
 		}
 	} else {
 		State = OFF;
-		KeypadCounter = 0;
-		TimeoutTime = TIMER4_TAR_R;
+		ResetState();
 	}
 	return 0;
 }
@@ -262,63 +276,80 @@ static uint32_t StateChange3() {
 	if(TimeoutTime - TIMER4_TAR_R < KEYCODE_TIMEOUT) {
 		if(KeypadCounter == KEYCODE_LENGTH) {
 			strcpy(TempKeycode2, KeycodeInput);
-			if(UpdateKey()) {
+			if(!UpdateKey()) {
 				// Display success message
 			} else {
 				// Display incorrect input message
 			}
+			State = OFF;
+			ResetState();
 		}
 	} else {
 		State = OFF;
-		KeypadCounter = 0;
+		ResetState();
 	}
 	return 0;
 }
 
 // Execute state functions and change states if necessary
 void ChangeState() {
+	ST7735_SetCursor(0,0);
 	if(State == OFF) {
+		ST7735_OutString("Alarm Off          ");
 		StateOff();
 	} else if (State == WAITING) {
+		ST7735_OutString("Alarm on in 5 sec  ");		
 		StateWaiting();
 	} else if (State == ON) {
+		ST7735_OutString("Alarm Enabled      ");		
 		StateOn();
 	} else if(State == OPEN) {
+		ST7735_OutString("Door breached..run!");		
 		StateOpen();
 	} else if (State == CHANGE_PASS) {
+		ST7735_OutString("Input old keycode  ");		
 		StateChange1();
 	} else if (State == NEW_PASS) {
+		ST7735_OutString("Input new keycode  ");		
 		StateChange2();
 	} else if (State == CONFIRM_PASS) {
+		ST7735_OutString("Confirm new keycode");
 		StateChange3();
 	}
 }
 
 static void Timer3_Init() {
+	SYSCTL_RCGCTIMER_R |= 0x08;      // activate timer3
+  int delay = SYSCTL_RCGCTIMER_R;      // allow time to finish activating
   TIMER3_CTL_R = 0x00000000;    // 1) disable TIMER3 during setup
   TIMER3_CFG_R = 0x00000000;    // 2) configure for 32-bit mode
-  TIMER3_TAMR_R = 0x0000001;    // 3) 1-SHOT mode
+  TIMER3_TAMR_R = TIMER_TAMR_TAMR_PERIOD;  // 3) 1-SHOT mode
   TIMER3_TAILR_R = 0xFFFFFFFF;  // 4) reload value
   TIMER3_TAPR_R = 0;            // 5) bus clock resolution
   TIMER3_CTL_R = 0x00000001;    // 10) enable TIMER3
 }
 static void Timer4_Init() {
+	SYSCTL_RCGCTIMER_R |= 0x10;      // activate timer4
+  int delay = SYSCTL_RCGCTIMER_R;      // allow time to finish activating
   TIMER4_CTL_R = 0x00000000;    // 1) disable TIMER3 during setup
   TIMER4_CFG_R = 0x00000000;    // 2) configure for 32-bit mode
-  TIMER4_TAMR_R = 0x0000001;    // 3) 1-SHOT mode
+  TIMER4_TAMR_R = TIMER_TAMR_TAMR_PERIOD;    // 3) 1-SHOT mode
   TIMER4_TAILR_R = 0xFFFFFFFF;  // 4) reload value
   TIMER4_TAPR_R = 0;            // 5) bus clock resolution
   TIMER4_CTL_R = 0x00000001;    // 10) enable TIMER3
 }
 
 void System_Init(void) {
+  DisableInterrupts();
 	Timer3_Init();
 	Timer4_Init();
 	ST7735_InitR(INITR_REDTAB);
+	ST7735_FillScreen(ST7735_BLACK);
 	Switch_Init(EnableSystem,ChangeKeycode,MagnetOpen);
 	Keypad_Init(KeypadPress);
 	Speaker_Init();
 	State = OFF;
+	Output_Init();
   ESP8266_Init(115200);      // connect to access point, set up as client
   ESP8266_GetVersionNumber();
 }

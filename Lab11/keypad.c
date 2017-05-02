@@ -63,7 +63,9 @@ static void GPIOArm(void){
   GPIO_PORTD_ICR_R = 0xFF;      // (e) clear flag4
   GPIO_PORTD_IM_R |= 0xFF;      // (f) arm interrupt on PE *** No IME bit as mentioned in Book ***
   NVIC_PRI0_R = (NVIC_PRI0_R&0x00FFFFFF)|0xA0000000; // (g) priority 5
-  NVIC_EN0_R = 1<<3;      // (h) enable interrupt 30 in NVIC  
+  NVIC_EN0_R = 1<<3;      // (h) enable interrupt 30 in NVIC
+  NVIC_PRI1_R = (NVIC_PRI1_R&0xFFFFFF00)|0x000000A0; // (g) priority 5
+  NVIC_EN0_R = 1<<4;      // (h) enable interrupt 30 in NVIC    
 }
 // Initialize switch interface on PF4,1,0 
 // Inputs:  pointer to a function to call on touch (falling edge),

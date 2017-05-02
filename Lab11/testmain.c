@@ -6,14 +6,15 @@
 #include "speaker.h"
 #include "solenoid.h"
 #include "ST7735.h"
+#include "../inc/tm4c123gh6pm.h"
 uint32_t KeypadPresses[1000] = 	{13};
-uint32_t KeypadCounter = 0;
+uint32_t KeypadCount = 0;
 uint32_t LastKey = 13;
 
 char Switch = ' ';
 
 void KeypadPress(uint32_t pressed) {
-	KeypadPresses[KeypadCounter++] = pressed;
+	KeypadPresses[KeypadCount++] = pressed;
 	LastKey = pressed;
 }
 void MagnetPress() {
@@ -37,19 +38,21 @@ void DelayWait10ms(uint32_t n){uint32_t volatile time;
   }
 }
 
-int main1(void) {
+int main(void) {
 	PLL_Init(Bus80MHz);				// init modules
-	ST7735_InitR(INITR_REDTAB);
-	Switch_Init(Button1Press,Button2Press,MagnetPress);
-	Keypad_Init(KeypadPress);
-	//Speaker_Init();
+//	ST7735_InitR(INITR_REDTAB);
+//	Switch_Init(Button1Press,Button2Press,MagnetPress);
+	//Keypad_Init(KeypadPress);
+	Speaker_Init();
 	while(1){
 		DelayWait10ms(100);
-		ST7735_SetCursor(0,0);
-		ST7735_FillScreen(ST7735_BLACK);
-		ST7735_OutUDec(LastKey);
-		ST7735_OutChar('\r');
-		ST7735_OutChar(Switch);
+		SpeakerEnable();
+//		ST7735_SetCursor(0,0);
+//		ST7735_FillScreen(ST7735_BLACK);
+//		ST7735_OutUDec(LastKey);
+//		ST7735_OutChar('\r');
+//		ST7735_OutChar(Switch);
+		DelayWait10ms(100);
 	}
 	
 }

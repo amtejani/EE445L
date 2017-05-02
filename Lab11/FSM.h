@@ -8,6 +8,7 @@
 // TA: Lavanya
 // Last Revision: 4/19/2017
 
+extern uint32_t State;
 // Updates the state of the system
 void ChangeState(void);
 

@@ -6,3 +6,4 @@
 .\testmain.o: speaker.h
 .\testmain.o: solenoid.h
 .\testmain.o: ST7735.h
+.\testmain.o: ../inc/tm4c123gh6pm.h
