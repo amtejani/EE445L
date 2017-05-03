@@ -57,7 +57,7 @@ ESP8266    TM4C123
 #include "esp8266.h"
 #include "UART.h"
 // Access point parameters
-#define SSID_NAME  "Caroline Phone"
+#define SSID_NAME  "AndroidAPAli"
 #define PASSKEY    "minnie1208"
 //#define SEC_TYPE   ESP8266_ENCRYPT_MODE_WPA2_PSK
 

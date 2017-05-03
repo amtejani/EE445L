@@ -9,7 +9,6 @@
 // Last Revision: 4/19/2017
 
 #include <stdint.h>
-#include <string.h>
 #include "PLL.h"
 #include "switch.h"
 #include "keypad.h"
@@ -30,15 +29,18 @@
 
 #define KEYCODE_LENGTH 4
 
-#define KEYCODE_TIMEOUT 80000000*5
-#define WAITING_TIMEOUT 80000000*5
+#define KEYCODE_TIMEOUT 80000000*10
+#define WAITING_TIMEOUT 80000000*10
 
 char CHANGE_CODE[] = "GET /changecode?oldcode=0000&newcode1=0000&newcode2=0000 HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\n\r\n";
-char CHECK_CODE[] = "GET /checkcode?code=0000 HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\n\r\n";
+char CHECK_CODE[] = "GET /checkcode?code=0000 HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\n\r\n";
+char SEND_STATUS[] = "GET /status?state=0&door=0 HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\n\r\n";
+char LOCK_RESPONSE[] = "lock=";
+char NEW_CODE_RESPONSE[] = "succ=";
+char TEST_CODE_RESPONSE[] = "good=";
 //#define SEND_STATUS "POST /status HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 14\r\n\r\nstate=0&door=0\r\n\r\n"
 //#define SEND_STATUS "GET /status?state=0&door=0 HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\n\r\n"
 //char SEND_STATUS[] = "GET /data/2.5/weather?q=Austin%20Texas&APPID=1842c4db572feb98a55e1d096f86c57b HTTP/1.1\r\nHost:api.openweathermap.org\r\n\r\n";
-char SEND_STATUS[] = "GET /status?state=0&door=0 HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\n\r\n";
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -47,11 +49,11 @@ void EndCritical(long sr);    // restore I bit to previous value
 void WaitForInterrupt(void);  // low power mode
 
 uint32_t KeypadCounter;
-char* KeycodeInput;
+char KeycodeInput[KEYCODE_LENGTH];
 
-char* TempKeycode0;
-char* TempKeycode1;
-char* TempKeycode2;
+char TempKeycode0[KEYCODE_LENGTH];
+char TempKeycode1[KEYCODE_LENGTH];
+char TempKeycode2[KEYCODE_LENGTH];
 
 uint32_t State;
 uint32_t DoorStatus;
@@ -63,6 +65,9 @@ uint32_t TimeoutTime;
 
 #define TIMEOUT_ERROR "ur too slow scrub"
 #define INVALID_INPUT "Incorrect keycode"
+#define NO_ERROR  "                 "
+#define SUCCESS  "Success!         "
+
 
 // On Enable button press, turn on system
 static void EnableSystem() {
@@ -74,7 +79,6 @@ static void EnableSystem() {
 static void ResetState(){
 	ChangeCode = 0;
 	Enable = 0;
-	KeycodeTime = TIMER4_TAR_R;
 	TimeoutTime = TIMER3_TAR_R;
 	KeypadCounter = 0;
 }
@@ -102,51 +106,72 @@ static void KeypadPress(uint32_t pressed) {
 }
 
 
+static char* SearchStr(char* string, char* searchingString) {
+	char* ptr = searchingString;
+	while(*string != 0) {
+		if(*searchingString == 0) return string;
+		if(*searchingString == *string) {
+			searchingString++;
+		} else {
+			searchingString = ptr;
+		}
+		string++;
+	}
+	return 0;
+}
+
+
 // validate key from server
 static uint32_t ValidateKey() {
+	int ret = 1;
 	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-		char* Fetch;
-		strcpy(Fetch,CHECK_CODE);
 		int i;
 		for(i = 0; i < KEYCODE_LENGTH; i++) {
-			Fetch[171 + i] = KeycodeInput[i];
+			CHECK_CODE[20 + i] = KeycodeInput[i];
 		}
-    ESP8266_SendTCP(Fetch);
+    ESP8266_SendTCP(CHECK_CODE);
+		//if (ServerResponseBuffer[231] == '1') // return 0 if key is valid 
+		//	ret = 0;
+		char* buff = SearchStr(ServerResponseBuffer,TEST_CODE_RESPONSE);
+		if(buff) {
+			if (*buff == '1')
+				ret = 0;
+		}
+		
   }
   ESP8266_CloseTCPConnection();
-	return 0;
+	return ret;
 }
 // update key in server
 static uint32_t UpdateKey() {
+	int ret = 1;
 	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-		char* Fetch;
-		strcpy(Fetch,CHANGE_CODE);
-		int i;
-		for(i = 0; i < KEYCODE_LENGTH; i++) {
-			Fetch[176 + i] = TempKeycode0[i];
-			Fetch[190 + i] = TempKeycode1[i];
-			Fetch[204 + i] = TempKeycode2[i];
+    ESP8266_SendTCP(CHANGE_CODE);
+		char* buff = SearchStr(ServerResponseBuffer,NEW_CODE_RESPONSE);
+		if(buff) {
+			if (*buff == '1')
+				ret = 0;
 		}
-    ESP8266_SendTCP(Fetch);
   }
   ESP8266_CloseTCPConnection();
-	return 0;
+	return ret;
 }
 
 uint32_t UpdateState() {
 	ESP8266_GetStatus();
-	//if(ESP8266_MakeTCPConnection("api.openweathermap.org")){ // open socket in server
 	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
 		SEND_STATUS[18] = State + '0';
 		SEND_STATUS[25] = DoorStatus + '0';
     ESP8266_SendTCP(SEND_STATUS);
+		char* buff = SearchStr(ServerResponseBuffer,LOCK_RESPONSE);
+		if(buff) {
+			if (*buff == '1')
+				Solenoid_Out(0);
+			else 
+				Solenoid_Out(1);
+		}
   }
   ESP8266_CloseTCPConnection();
-//	ESP8266_GetStatus();
-//    if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-//      ESP8266_SendTCP(SEND_STATUS);
-//    }
-//    ESP8266_CloseTCPConnection();
 	return 0;
 }
 
@@ -157,6 +182,7 @@ static uint32_t StateOff() {
 		State = CHANGE_PASS;
 	}
 	ResetState();
+	KeycodeTime = TIMER4_TAR_R;
 	return 0;
 }
 
@@ -171,19 +197,26 @@ static uint32_t StateWaiting() {
 			ST7735_OutString(TIMEOUT_ERROR);
 		} else if(KeypadCounter == KEYCODE_LENGTH) {
 			int result = ValidateKey();
-			ResetState();
 			if(!result) {
 				State = OFF;
+				ResetState();
+				KeycodeTime = TIMER4_TAR_R;
+				ST7735_SetCursor(0,1);
+				ST7735_OutString(NO_ERROR);
 				return 0;
 			} else {
 				// display error message
 				ST7735_SetCursor(0,1);
 				ST7735_OutString(INVALID_INPUT);
+				ResetState();
 			}
 		}
 	} else {
 		State = ON;
 		ResetState();
+		KeycodeTime = TIMER4_TAR_R;
+		ST7735_SetCursor(0,1);
+		ST7735_OutString(NO_ERROR);
 	}
 	return 0;
 }
@@ -201,6 +234,8 @@ static uint32_t StateOn() {
 		ResetState();
 		if(!result) {
 			State = OFF;
+			ST7735_SetCursor(0,1);
+			ST7735_OutString(NO_ERROR);
 			return 0;
 		} else {
 			// display error message
@@ -210,6 +245,8 @@ static uint32_t StateOn() {
 	} 
 	if(GetDoorStatus() == 1) { 
 		State = OPEN;
+		ST7735_SetCursor(0,1);
+		ST7735_OutString(NO_ERROR);
 		ResetState();
 	}
 	return 0;
@@ -229,6 +266,8 @@ static uint32_t StateOpen() {
 		ResetState();
 		if(!result) {
 			State = OFF;
+			ST7735_SetCursor(0,1);
+			ST7735_OutString(NO_ERROR);
 			SpeakerDisable();
 			return 0;
 		} else {
@@ -244,10 +283,15 @@ static uint32_t StateChange1() {
 	if(TimeoutTime - TIMER4_TAR_R < KEYCODE_TIMEOUT) {
 		if(KeypadCounter == KEYCODE_LENGTH) {
 			int result = ValidateKey();
-			strcpy(TempKeycode0, KeycodeInput);
+			int i;
+			for(i = 0; i < KEYCODE_LENGTH; i++) {
+				CHANGE_CODE[24 + i] = KeycodeInput[i];
+			}
 			ResetState();
 			if(!result) {
 				State = NEW_PASS;
+				ST7735_SetCursor(0,1);
+				ST7735_OutString(NO_ERROR);
 				return 0;
 			} else {
 				// display error message
@@ -262,6 +306,8 @@ static uint32_t StateChange1() {
 		ST7735_SetCursor(0,1);
 		ST7735_OutString(TIMEOUT_ERROR);
 		State = OFF;
+		ST7735_SetCursor(0,1);
+		ST7735_OutString(NO_ERROR);
 		ResetState();
 	}
 	return 0;
@@ -270,12 +316,17 @@ static uint32_t StateChange1() {
 static uint32_t StateChange2() {
 	if(TimeoutTime - TIMER4_TAR_R < KEYCODE_TIMEOUT) {
 		if(KeypadCounter == KEYCODE_LENGTH) {
-			strcpy(TempKeycode1, KeycodeInput);
+			int i;
+			for(i = 0; i < KEYCODE_LENGTH; i++) {
+				CHANGE_CODE[38 + i] = KeycodeInput[i];
+			}
 			State = CONFIRM_PASS;
 			ResetState();
 		}
 	} else {
 		State = OFF;
+		ST7735_SetCursor(0,1);
+		ST7735_OutString(NO_ERROR);
 		ResetState();
 	}
 	return 0;
@@ -284,11 +335,18 @@ static uint32_t StateChange2() {
 static uint32_t StateChange3() {
 	if(TimeoutTime - TIMER4_TAR_R < KEYCODE_TIMEOUT) {
 		if(KeypadCounter == KEYCODE_LENGTH) {
-			strcpy(TempKeycode2, KeycodeInput);
+			int i;
+			for(i = 0; i < KEYCODE_LENGTH; i++) {
+				CHANGE_CODE[52 + i] = KeycodeInput[i];
+			}
 			if(!UpdateKey()) {
 				// Display success message
+				ST7735_SetCursor(0,1);
+				ST7735_OutString(SUCCESS);
 			} else {
 				// Display incorrect input message
+				ST7735_SetCursor(0,1);
+				ST7735_OutString(INVALID_INPUT);
 			}
 			State = OFF;
 			ResetState();
@@ -356,6 +414,7 @@ void System_Init(void) {
 	ST7735_FillScreen(ST7735_BLACK);
 	Switch_Init(EnableSystem,ChangeKeycode,MagnetOpen);
 	Keypad_Init(KeypadPress);
+	Solenoid_Init();
 	Speaker_Init();
 	State = OFF;
 	Output_Init();

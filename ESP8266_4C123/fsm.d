@@ -1,6 +1,5 @@
 .\fsm.o: FSM.c
 .\fsm.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\fsm.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h
 .\fsm.o: PLL.h
 .\fsm.o: switch.h
 .\fsm.o: keypad.h

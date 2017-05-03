@@ -61,14 +61,8 @@ int main(void){
 	System_Init();
 	int i = 0;
   while(1){
-//    ESP8266_GetStatus();
-//    if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-//      ESP8266_SendTCP(Fetch);
-//    }
-//    ESP8266_CloseTCPConnection();
 		ChangeState();
 		i++;
-			Solenoid_Out(i%2);
 		if(i%1000== 0) {
 			UpdateState();
 		}
