@@ -17,6 +17,7 @@
 #include "solenoid.h"
 #include "ST7735.h"
 #include "esp8266.h"
+#include "UART.h"
 #include "../inc/tm4c123gh6pm.h"
 
 #define OFF 0
@@ -32,9 +33,12 @@
 #define KEYCODE_TIMEOUT 80000000*5
 #define WAITING_TIMEOUT 80000000*5
 
-#define CHANGE_CODE "POST /changecode HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 40\r\n\r\noldcode=0000&newcode1=0000&newcode2=0000"
-#define CHECK_CODE "POST /checkcode HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 9\r\n\r\ncode=0000"
-#define SEND_STATUS "POST /status HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 14\r\n\r\nstate=0&door=0"
+#define CHANGE_CODE "POST /changecode HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 40\r\n\r\noldcode=0000&newcode1=0000&newcode2=0000\r\n\r\n"
+#define CHECK_CODE "POST /checkcode HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 9\r\n\r\ncode=0000\r\n\r\n"
+//#define SEND_STATUS "POST /status HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\nUser-Agent: Keil\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 14\r\n\r\nstate=0&door=0\r\n\r\n"
+//#define SEND_STATUS "GET /status?state=0&door=0 HTTP/1.1\r\nHost:securityserver-165920.appspot.com\r\n\r\n"
+char SEND_STATUS[] = "GET /data/2.5/weather?q=Austin%20Texas&APPID=1842c4db572feb98a55e1d096f86c57b HTTP/1.1\r\nHost:api.openweathermap.org\r\n\r\n";
+
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -100,44 +104,52 @@ static void KeypadPress(uint32_t pressed) {
 
 // validate key from server
 static uint32_t ValidateKey() {
-//	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-//		char* Fetch;
-//		strcpy(Fetch,CHECK_CODE);
-//		int i;
-//		for(i = 0; i < KEYCODE_LENGTH; i++) {
-//			Fetch[171 + i] = KeycodeInput[i];
-//		}
-//    ESP8266_SendTCP(Fetch);
-//  }
-//  ESP8266_CloseTCPConnection();
+	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
+		char* Fetch;
+		strcpy(Fetch,CHECK_CODE);
+		int i;
+		for(i = 0; i < KEYCODE_LENGTH; i++) {
+			Fetch[171 + i] = KeycodeInput[i];
+		}
+    ESP8266_SendTCP(Fetch);
+  }
+  ESP8266_CloseTCPConnection();
 	return 0;
 }
 // update key in server
 static uint32_t UpdateKey() {
-//	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
-//		char* Fetch;
-//		strcpy(Fetch,SEND_STATUS);
-//		int i;
-//		for(i = 0; i < KEYCODE_LENGTH; i++) {
-//			Fetch[176 + i] = TempKeycode0[i];
-//			Fetch[190 + i] = TempKeycode1[i];
-//			Fetch[204 + i] = TempKeycode2[i];
-//		}
-//    ESP8266_SendTCP(Fetch);
-//  }
-//  ESP8266_CloseTCPConnection();
+	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
+		char* Fetch;
+		strcpy(Fetch,CHANGE_CODE);
+		int i;
+		for(i = 0; i < KEYCODE_LENGTH; i++) {
+			Fetch[176 + i] = TempKeycode0[i];
+			Fetch[190 + i] = TempKeycode1[i];
+			Fetch[204 + i] = TempKeycode2[i];
+		}
+    ESP8266_SendTCP(Fetch);
+  }
+  ESP8266_CloseTCPConnection();
 	return 0;
 }
 
 uint32_t UpdateState() {
-//	if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
+	//if(ESP8266_MakeTCPConnection("securityserver-165920.appspot.com")){ // open socket in server
+//	ESP8266_GetStatus();
+//	if(ESP8266_MakeTCPConnection("api.openweathermap.org")){ // open socket in server
 //		char* Fetch;
 //		strcpy(Fetch,SEND_STATUS);
-//		Fetch[170] = State + '0';
-//		Fetch[177] = DoorStatus + '0';
-//    ESP8266_SendTCP(Fetch);
+//		//Fetch[18] = State + '0';
+//		//Fetch[25] = DoorStatus + '0';
+//    ESP8266_SendTCP(SEND_STATUS);
 //  }
 //  ESP8266_CloseTCPConnection();
+	ESP8266_GetStatus();
+    if(ESP8266_MakeTCPConnection("api.openweathermap.org")){ // open socket in server
+      //LED_GreenOn();
+      ESP8266_SendTCP(SEND_STATUS);
+    }
+    ESP8266_CloseTCPConnection();
 	return 0;
 }
 
@@ -341,14 +353,14 @@ static void Timer4_Init() {
 
 void System_Init(void) {
   DisableInterrupts();
-	Timer3_Init();
-	Timer4_Init();
-	ST7735_InitR(INITR_REDTAB);
-	ST7735_FillScreen(ST7735_BLACK);
-	Switch_Init(EnableSystem,ChangeKeycode,MagnetOpen);
-	Keypad_Init(KeypadPress);
-	Speaker_Init();
-	State = OFF;
+//	Timer3_Init();
+//	Timer4_Init();
+//ST7735_InitR(INITR_REDTAB);
+//	ST7735_FillScreen(ST7735_BLACK);
+//	Switch_Init(EnableSystem,ChangeKeycode,MagnetOpen);
+//	Keypad_Init(KeypadPress);
+//	Speaker_Init();
+//	State = OFF;
 	Output_Init();
   ESP8266_Init(115200);      // connect to access point, set up as client
   ESP8266_GetVersionNumber();

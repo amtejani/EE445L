@@ -20,7 +20,7 @@ int main1(void) {
 	PLL_Init(Bus80MHz);				// init modules
 	System_Init();
 	while(1) {
-		ChangeState();
+		//ChangeState();
 		UpdateState();
 	}
 }

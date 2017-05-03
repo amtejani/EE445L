@@ -4,33 +4,35 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 C:\Users\Caroline\SkyDrive\EE 445L\EE445L\Lab11\SecuritySystem.uvproj
-Project File Date:  04/20/2017
+Project File Date:  05/02/2017
 
 <h2>Output:</h2>
 Build target 'SecuritySystem'
+compiling system.c...
+compiling testmain.c...
 linking...
-Program Size: Code=2988 RO-data=32 RW-data=108 ZI-data=6180  
+Program Size: Code=2824 RO-data=32 RW-data=108 ZI-data=6180  
 ".\SecuritySystem.axf" - 0 Error(s), 0 Warning(s).
-</pre>
-</body>
-</html>
-oad "C:\\Users\\Caroline\\SkyDrive\\EE 445L\\EE445L\\Lab11\\SecuritySystem.axf" 
-Connecting: Mode=JTAG, Speed=1000000Hz
-Erase Done.
-Programming Done.
-Verify OK.
-tySystem.axf" - 1 Error(s), 0 Warning(s).
-Target not created
-uritySystem.axf" 
-Connecting: Mode=JTAG, Speed=1000000Hz
-Connection failed!, error code=&d
-Error: Flash Download failed  -  Target DLL has been cancelled
 Load "C:\\Users\\Caroline\\SkyDrive\\EE 445L\\EE445L\\Lab11\\SecuritySystem.axf" 
 Connecting: Mode=JTAG, Speed=1000000Hz
 Erase Done.
 Programming Done.
 Verify OK.
-d=1000000Hz
+elled
+but never referenced
+  static void MagnetOpen() {
+FSM.c(98): warning:  #177-D: function "KeypadPress" was declared but never referenced
+  static void KeypadPress(uint32_t pressed) {
+FSM.c(333): warning:  #177-D: function "Timer3_Init" was declared but never referenced
+  static void Timer3_Init() {
+FSM.c(343): warning:  #177-D: function "Timer4_Init" was declared but never referenced
+  static void Timer4_Init() {
+FSM.c: 6 warnings, 0 errors
+linking...
+Program Size: Code=5672 RO-data=32 RW-data=276 ZI-data=6180  
+".\SecuritySystem.axf" - 0 Error(s), 6 Warning(s).
+Load "C:\\Users\\Caroline\\SkyDrive\\EE 445L\\EE445L\\Lab11\\SecuritySystem.axf" 
+Connecting: Mode=JTAG, Speed=1000000Hz
 Erase Done.
 Programming Done.
 Verify OK.

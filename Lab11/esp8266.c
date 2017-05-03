@@ -57,8 +57,8 @@ ESP8266    TM4C123
 #include "esp8266.h"
 #include "UART.h"
 // Access point parameters
-#define SSID_NAME  "ValvanoAP"
-#define PASSKEY    "12345678"
+#define SSID_NAME  "Caroline Phone"
+#define PASSKEY    "bang133*"
 //#define SEC_TYPE   ESP8266_ENCRYPT_MODE_WPA2_PSK
 
 #define BUFFER_SIZE 1024
@@ -354,7 +354,7 @@ void ESP8266_Init(uint32_t baud){
   ServerResponseSearchFinished = 0;
   EnableInterrupts();
 // step 1: AT+RST reset module
-  //printf("ESP8266 Initialization:\n\r");
+  printf("ESP8266 Initialization:\n\r");
   ESP8266_EchoResponse = true; // debugging
   if(ESP8266_Reset()==0){ 
     printf("Reset failure, could not reset\n\r"); while(1){};
@@ -417,7 +417,7 @@ int ESP8266_Reset(){int try=MAXTRY;
 int ESP8266_SetWifiMode(uint8_t mode){
   int try=MAXTRY;
   if(mode > ESP8266_WIFI_MODE_AP_AND_CLIENT)return 0; // fail
-  SearchStart("no change");
+  SearchStart("ok");
   while(try){
     sprintf((char*)TXBuffer, "AT+CWMODE=%d\r\n", mode);
     ESP8266SendCommand((const char*)TXBuffer);
